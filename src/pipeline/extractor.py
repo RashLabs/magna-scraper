@@ -37,11 +37,11 @@ def extract_pages(local_path: str) -> list[dict]:
         raise ValueError(f"Unsupported file type: {suffix}")
 
 
-def run(reprocess: bool = False, cancel_check=None, progress_cb=None):
+def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
     """Extract text from all downloaded-but-not-extracted attachments.
     When reprocess=True, re-extract all downloaded attachments."""
     db = Database()
-    attachments = db.get_downloaded_unextracted(reprocess=reprocess)
+    attachments = db.get_downloaded_unextracted(reprocess=reprocess, since=since)
     total = len(attachments)
 
     if not attachments:

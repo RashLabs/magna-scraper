@@ -218,19 +218,22 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_parse(self, limit: int = 0, reprocess: bool = False) -> list[dict]:
+    def get_reports_needing_parse(self, limit: int = 0, reprocess: bool = False, since: str = "") -> list[dict]:
         """Reports with form_html but not yet parsed (or all with form_html if reprocess)."""
         if reprocess:
             sql = """SELECT id, reference_number, form_type, form_html FROM reports
-                     WHERE form_html IS NOT NULL
-                     ORDER BY id"""
+                     WHERE form_html IS NOT NULL"""
         else:
             sql = """SELECT id, reference_number, form_type, form_html FROM reports
-                     WHERE form_html IS NOT NULL AND parsed_at IS NULL
-                     ORDER BY id"""
+                     WHERE form_html IS NOT NULL AND parsed_at IS NULL"""
+        params = []
+        if since:
+            sql += " AND report_date >= ?"
+            params.append(since)
+        sql += " ORDER BY id"
         if limit:
             sql += f" LIMIT {limit}"
-        return [dict(r) for r in self.conn.execute(sql).fetchall()]
+        return [dict(r) for r in self.conn.execute(sql, params).fetchall()]
 
     def set_form_fields(self, report_id: int, form_fields: str, form_category: str):
         self.conn.execute(
@@ -247,16 +250,16 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_index(self, limit: int = 0, reprocess: bool = False) -> list[dict]:
+    def get_reports_needing_index(self, limit: int = 0, reprocess: bool = False, since: str = "") -> list[dict]:
         """Reports that need (re)indexing: parsed but never indexed,
         OR already indexed but have attachments extracted since last index.
         When reprocess=True, returns all parsed reports."""
+        params = []
         if reprocess:
             sql = """SELECT r.*,
                      (SELECT COUNT(*) FROM attachments a WHERE a.report_id = r.id) as att_count
                      FROM reports r
-                     WHERE r.parsed_at IS NOT NULL
-                     ORDER BY r.id"""
+                     WHERE r.parsed_at IS NOT NULL"""
         else:
             sql = """SELECT r.*,
                      (SELECT COUNT(*) FROM attachments a WHERE a.report_id = r.id) as att_count
@@ -268,11 +271,14 @@ class Database:
                                 WHERE a.report_id = r.id
                                   AND a.extracted_at IS NOT NULL
                                   AND a.indexed_at IS NULL
-                            ))
-                     ORDER BY r.id"""
+                            ))"""
+        if since:
+            sql += " AND r.report_date >= ?"
+            params.append(since)
+        sql += " ORDER BY r.id"
         if limit:
             sql += f" LIMIT {limit}"
-        return [dict(r) for r in self.conn.execute(sql).fetchall()]
+        return [dict(r) for r in self.conn.execute(sql, params).fetchall()]
 
     def report_has_pending_attachments(self, report_id: int) -> bool:
         """True if report has attachments not yet downloaded or extracted."""
@@ -310,20 +316,21 @@ class Database:
         )
         self.conn.commit()
 
-    def get_pending_attachments(self, reprocess: bool = False) -> list[dict]:
+    def get_pending_attachments(self, reprocess: bool = False, since: str = "") -> list[dict]:
+        params = []
         if reprocess:
-            cur = self.conn.execute(
-                """SELECT a.*, r.company_name, r.form_type FROM attachments a
-                   JOIN reports r ON r.id = a.report_id
-                   ORDER BY a.id"""
-            )
+            sql = """SELECT a.*, r.company_name, r.form_type FROM attachments a
+                     JOIN reports r ON r.id = a.report_id
+                     WHERE 1=1"""
         else:
-            cur = self.conn.execute(
-                """SELECT a.*, r.company_name, r.form_type FROM attachments a
-                   JOIN reports r ON r.id = a.report_id
-                   WHERE a.download_status = 'pending'
-                   ORDER BY a.id"""
-            )
+            sql = """SELECT a.*, r.company_name, r.form_type FROM attachments a
+                     JOIN reports r ON r.id = a.report_id
+                     WHERE a.download_status = 'pending'"""
+        if since:
+            sql += " AND r.report_date >= ?"
+            params.append(since)
+        sql += " ORDER BY a.id"
+        cur = self.conn.execute(sql, params)
         return [dict(r) for r in cur.fetchall()]
 
     def mark_downloaded(self, att_id: int, local_path: str):
@@ -341,20 +348,22 @@ class Database:
         )
         self.conn.commit()
 
-    def get_downloaded_unextracted(self, reprocess: bool = False) -> list[dict]:
+    def get_downloaded_unextracted(self, reprocess: bool = False, since: str = "") -> list[dict]:
         """Attachments downloaded but text not yet extracted (or all downloaded if reprocess)."""
+        params = []
         if reprocess:
-            cur = self.conn.execute(
-                """SELECT * FROM attachments
-                   WHERE download_status = 'downloaded'
-                   ORDER BY id"""
-            )
+            sql = """SELECT a.* FROM attachments a
+                     JOIN reports r ON r.id = a.report_id
+                     WHERE a.download_status = 'downloaded'"""
         else:
-            cur = self.conn.execute(
-                """SELECT * FROM attachments
-                   WHERE download_status = 'downloaded' AND extracted_at IS NULL
-                   ORDER BY id"""
-            )
+            sql = """SELECT a.* FROM attachments a
+                     JOIN reports r ON r.id = a.report_id
+                     WHERE a.download_status = 'downloaded' AND a.extracted_at IS NULL"""
+        if since:
+            sql += " AND r.report_date >= ?"
+            params.append(since)
+        sql += " ORDER BY a.id"
+        cur = self.conn.execute(sql, params)
         return [dict(r) for r in cur.fetchall()]
 
     def set_attachment_extracted(self, att_id: int):

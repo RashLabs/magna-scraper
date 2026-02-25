@@ -48,22 +48,23 @@ def _count_remaining(db: Database, stage: str) -> int:
 def _run_stage(stage: str, cancel_check, progress_cb,
                scrape_kwargs: dict, reprocess: bool = False):
     """Import and run a single pipeline stage."""
+    since = scrape_kwargs.get("since", "")
     if stage == "scrape":
         from pipeline.scraper import run
         run(cancel_check=cancel_check, progress_cb=progress_cb, **scrape_kwargs)
     elif stage == "parse":
         from pipeline.parser import run
-        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, since=since, cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "download":
         from pipeline.downloader import run
-        run(headless=scrape_kwargs.get("headless", True), reprocess=reprocess,
+        run(headless=scrape_kwargs.get("headless", True), reprocess=reprocess, since=since,
             cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "extract":
         from pipeline.extractor import run
-        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, since=since, cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "index":
         from pipeline.indexer import run
-        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, since=since, cancel_check=cancel_check, progress_cb=progress_cb)
 
 
 def run(since: str = "2024-01-01", headless: bool = True,

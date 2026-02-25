@@ -17,11 +17,11 @@ from config import (
 log = logging.getLogger(__name__)
 
 
-def run(headless: bool = True, reprocess: bool = False, cancel_check=None, progress_cb=None):
+def run(headless: bool = True, reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
     """Download all pending attachments.
     When reprocess=True, re-download all attachments."""
     db = Database()
-    pending = db.get_pending_attachments(reprocess=reprocess)
+    pending = db.get_pending_attachments(reprocess=reprocess, since=since)
 
     if not pending:
         log.info("No pending attachments to download.")

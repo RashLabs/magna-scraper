@@ -44,12 +44,16 @@ def _get_qdrant():
 
 def _ensure_collection():
     from qdrant_client.models import Distance, VectorParams, PayloadSchemaType
+    from qdrant_client.models import SparseVectorParams, Modifier
     client = _qdrant_client
     collections = [c.name for c in client.get_collections().collections]
     if QDRANT_COLLECTION not in collections:
         client.create_collection(
             collection_name=QDRANT_COLLECTION,
             vectors_config=VectorParams(size=EMBEDDING_DIMS, distance=Distance.COSINE),
+            sparse_vectors_config={
+                "bm25": SparseVectorParams(modifier=Modifier.IDF),
+            },
         )
         # Create payload indexes
         for field in ["source_type", "reference_number", "company_id", "form_type", "company_name"]:
@@ -64,6 +68,20 @@ def _ensure_collection():
             field_schema=PayloadSchemaType.KEYWORD,
         )
         log.info(f"Created Qdrant collection '{QDRANT_COLLECTION}'")
+    else:
+        # Ensure BM25 sparse vector config exists on pre-existing collections
+        try:
+            info = client.get_collection(QDRANT_COLLECTION)
+            if not info.config.params.sparse_vectors or "bm25" not in info.config.params.sparse_vectors:
+                client.update_collection(
+                    collection_name=QDRANT_COLLECTION,
+                    sparse_vectors_config={
+                        "bm25": SparseVectorParams(modifier=Modifier.IDF),
+                    },
+                )
+                log.info("Added BM25 sparse vector config to existing collection")
+        except Exception as e:
+            log.warning(f"Could not add BM25 sparse config to existing collection: {e}")
 
 
 def _get_genai():
@@ -210,9 +228,9 @@ def _index_report(db: Database, report: dict) -> int:
     if not texts_to_embed:
         return 0
 
-    # 3. Embed in batches of 8
+    # 3. Embed in batches of 40
     all_vectors = []
-    batch_size = 8
+    batch_size = 40
     for i in range(0, len(texts_to_embed), batch_size):
         batch = texts_to_embed[i:i + batch_size]
         vectors = _embed_texts(batch)
@@ -220,11 +238,15 @@ def _index_report(db: Database, report: dict) -> int:
         if i + batch_size < len(texts_to_embed):
             time.sleep(0.5)
 
-    # 4. Build points
+    # 4. Build points (dense + BM25 sparse vectors)
+    from qdrant_client.models import Document
     for vector, payload in zip(all_vectors, point_payloads):
         points.append(PointStruct(
             id=str(uuid.uuid4()),
-            vector=vector,
+            vector={
+                "": vector,
+                "bm25": Document(text=payload["chunk_text"], model="Qdrant/bm25"),
+            },
             payload=payload,
         ))
 
@@ -242,11 +264,12 @@ def _index_report(db: Database, report: dict) -> int:
     return len(points)
 
 
-def run(reprocess: bool = False, cancel_check=None, progress_cb=None):
+def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
     """Index all reports that are parsed but not yet indexed.
     When reprocess=True, re-index all parsed reports."""
     db = Database()
-    reports = db.get_reports_needing_index(reprocess=reprocess)
+    log.info(f"Querying reports to index (reprocess={reprocess}, since={since or 'all'})...")
+    reports = db.get_reports_needing_index(reprocess=reprocess, since=since)
     total = len(reports)
 
     if not reports:
@@ -277,13 +300,11 @@ def run(reprocess: bool = False, cancel_check=None, progress_cb=None):
 
             indexed += 1
             total_points += n_points
-
-            if indexed % 20 == 0 or indexed == total:
-                log.info(f"  [{indexed}/{total}] Indexed, {total_points} total points")
+            log.info(f"  [{indexed}/{total}] {report['reference_number']} — {report.get('company_name','')} — {n_points} pts")
 
         except Exception as e:
             errors += 1
-            log.error(f"  Failed to index {report['reference_number']}: {e}")
+            log.error(f"  [{i}/{total}] FAILED {report['reference_number']}: {e}")
 
         if progress_cb:
             progress_cb(i, total)

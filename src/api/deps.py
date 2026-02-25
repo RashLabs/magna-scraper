@@ -94,8 +94,9 @@ class JobLogHandler(logging.Handler):
         try:
             msg = self.format(record)
             self.job.log_lines.append(msg)
-        except Exception:
-            pass
+        except Exception as e:
+            import sys
+            print(f"[JobLogHandler] emit failed: {e}", file=sys.stderr)
 
 
 def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
@@ -152,6 +153,11 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
                 lgr.addHandler(file_handler)
             lgr.setLevel(logging.INFO)
 
+        import sys
+        print(f"[DEBUG] Attached handler to loggers: {[l.name for l in loggers_to_attach]}", file=sys.stderr)
+        print(f"[DEBUG] job.log_lines id={id(job.log_lines)}, len={len(job.log_lines)}", file=sys.stderr)
+        job.log_lines.append(f"[DEBUG] Job {stage} starting...")
+
         try:
             target_kwargs = kwargs or {}
             target_kwargs["cancel_check"] = lambda: job.cancel_requested
@@ -166,6 +172,7 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
         except Exception as e:
             job.error = str(e)
             job.status = "error"
+            job.log_lines.append(f"[ERROR] Job {stage} failed: {e}")
             log.exception(f"Job {stage} failed")
         finally:
             job.finished_at = datetime.now().isoformat()
