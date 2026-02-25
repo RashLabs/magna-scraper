@@ -242,10 +242,11 @@ def _index_report(db: Database, report: dict) -> int:
     return len(points)
 
 
-def run(cancel_check=None, progress_cb=None):
-    """Index all reports that are parsed but not yet indexed."""
+def run(reprocess: bool = False, cancel_check=None, progress_cb=None):
+    """Index all reports that are parsed but not yet indexed.
+    When reprocess=True, re-index all parsed reports."""
     db = Database()
-    reports = db.get_reports_needing_index()
+    reports = db.get_reports_needing_index(reprocess=reprocess)
     total = len(reports)
 
     if not reports:

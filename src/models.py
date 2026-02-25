@@ -8,6 +8,8 @@ class PipelineStartRequest(BaseModel):
     headless: bool = True
     company_list: str = ""
     company_ids: list[str] | None = None  # magna_ids to scrape (subset of ta125)
+    rescrape: bool = False  # when True, ignore watermarks and scrape the full date range
+    reprocess: bool = False  # when True, re-run parse/download/extract/index on already-processed items
 
 
 class PipelineStatusResponse(BaseModel):

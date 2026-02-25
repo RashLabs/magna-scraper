@@ -6,3 +6,6 @@ data/attachments/
 .venv/
 data/magna-full.db
 misc/*.html
+data/magna_v2.db
+data/magna_v2.db-shm
+data/magna_v2.db-wal

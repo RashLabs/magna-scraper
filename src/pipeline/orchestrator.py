@@ -44,28 +44,30 @@ def _count_remaining(db: Database, stage: str) -> int:
     return 0
 
 
-def _run_stage(stage: str, cancel_check, progress_cb, scrape_kwargs: dict):
+def _run_stage(stage: str, cancel_check, progress_cb,
+               scrape_kwargs: dict, reprocess: bool = False):
     """Import and run a single pipeline stage."""
     if stage == "scrape":
         from pipeline.scraper import run
         run(cancel_check=cancel_check, progress_cb=progress_cb, **scrape_kwargs)
     elif stage == "parse":
         from pipeline.parser import run
-        run(cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "download":
         from pipeline.downloader import run
-        run(headless=scrape_kwargs.get("headless", True),
+        run(headless=scrape_kwargs.get("headless", True), reprocess=reprocess,
             cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "extract":
         from pipeline.extractor import run
-        run(cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
     elif stage == "index":
         from pipeline.indexer import run
-        run(cancel_check=cancel_check, progress_cb=progress_cb)
+        run(reprocess=reprocess, cancel_check=cancel_check, progress_cb=progress_cb)
 
 
 def run(since: str = "2024-01-01", headless: bool = True,
         company_list: str = "", company_ids: list[str] | None = None,
+        rescrape: bool = False, reprocess: bool = False,
         cancel_check=None, progress_cb=None):
     """Run all pipeline stages sequentially with retry on remaining items.
 
@@ -77,6 +79,7 @@ def run(since: str = "2024-01-01", headless: bool = True,
         "headless": headless,
         "company_list": company_list,
         "company_ids": company_ids,
+        "rescrape": rescrape,
     }
 
     total_stages = len(STAGE_DEFS)
@@ -98,7 +101,8 @@ def run(since: str = "2024-01-01", headless: bool = True,
                 log.info("Run-all cancelled during stage '%s'", stage)
                 return
 
-            _run_stage(stage, cancel_check, progress_cb=None, scrape_kwargs=scrape_kwargs)
+            _run_stage(stage, cancel_check, progress_cb=None,
+                       scrape_kwargs=scrape_kwargs, reprocess=reprocess)
 
             if cancel_check and cancel_check():
                 log.info("Run-all cancelled during stage '%s'", stage)

@@ -17,10 +17,11 @@ from config import (
 log = logging.getLogger(__name__)
 
 
-def run(headless: bool = True, cancel_check=None, progress_cb=None):
-    """Download all pending attachments."""
+def run(headless: bool = True, reprocess: bool = False, cancel_check=None, progress_cb=None):
+    """Download all pending attachments.
+    When reprocess=True, re-download all attachments."""
     db = Database()
-    pending = db.get_pending_attachments()
+    pending = db.get_pending_attachments(reprocess=reprocess)
 
     if not pending:
         log.info("No pending attachments to download.")
@@ -84,7 +85,7 @@ def run(headless: bool = True, cancel_check=None, progress_cb=None):
 
             rel_path = f"data/attachments/{ref}/{filename}"
 
-            if dest_path.exists() and dest_path.stat().st_size > 0:
+            if not reprocess and dest_path.exists() and dest_path.stat().st_size > 0:
                 db.mark_downloaded(att_id, rel_path)
                 log.info(f"  [{i}/{total}] Already on disk: {ref}/{filename}")
                 if progress_cb:

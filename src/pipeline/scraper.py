@@ -8,7 +8,7 @@ import json
 import logging
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright, Page
@@ -287,6 +287,7 @@ def _load_companies(company_list: str = "", company_ids: list[str] | None = None
 
 def run(since: str = DEFAULT_SINCE, headless: bool = True,
         company_list: str = "", company_ids: list[str] | None = None,
+        rescrape: bool = False,
         cancel_check=None, progress_cb=None):
     """Main scrape entry point.
 
@@ -294,9 +295,10 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
         company_list: Path to a JSON file with company list.
         company_ids: List of magna_id strings to scrape (filters the company list).
                      If empty/None, scrapes all companies in the list.
+        rescrape: When True, ignore watermarks and scrape the full date range.
     """
-    from_date = _to_magna_date(since)
-    to_date = _to_magna_date(datetime.now().strftime("%Y-%m-%d"))
+    to_date_iso = datetime.now().strftime("%Y-%m-%d")
+    to_date = _to_magna_date(to_date_iso)
 
     companies = _load_companies(company_list, company_ids)
     if not companies:
@@ -304,7 +306,7 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
         return
 
     total = len(companies)
-    log.info(f"Scraping {total} companies (since={since})")
+    log.info(f"Scraping {total} companies (since={since}, rescrape={rescrape})")
 
     db = Database()
 
@@ -318,6 +320,22 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
             entity_id = str(company["magna_id"])
             name = company.get("name", "").strip() or company.get("magna_name", "")
 
+            # ── Watermark skip/adjust logic ──
+            effective_since = since
+            if not rescrape:
+                watermark = db.get_watermark(entity_id)
+                if watermark:
+                    if watermark >= to_date_iso:
+                        log.info(f"[{i}/{total}] {name} — already scraped through {watermark}, skipping")
+                        if progress_cb:
+                            progress_cb(i, total)
+                        continue
+                    if watermark >= since:
+                        next_day = (datetime.strptime(watermark, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+                        log.info(f"[{i}/{total}] {name} — resuming from {next_day} (watermark {watermark})")
+                        effective_since = next_day
+
+            from_date = _to_magna_date(effective_since)
             log.info(f"[{i}/{total}] {name} (entity {entity_id})...")
 
             try:
@@ -327,6 +345,8 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
                     cancel_check=cancel_check,
                 )
                 log.info(f"  => {stats['reports']} reports, {stats['attachments']} att, {stats['html_fetched']} html")
+                # Update watermark on successful scrape
+                db.set_watermark(entity_id, to_date_iso)
             except Exception as e:
                 log.error(f"  ERROR: {e}")
 
@@ -350,6 +370,8 @@ if __name__ == "__main__":
     parser.add_argument("--headless", action="store_true")
     parser.add_argument("--company-list", metavar="JSON")
     parser.add_argument("--company-ids", nargs="+", metavar="ID", help="Magna entity IDs to scrape")
+    parser.add_argument("--rescrape", action="store_true", help="Ignore watermarks, scrape full date range")
     args = parser.parse_args()
     run(since=args.since, headless=args.headless,
-        company_list=args.company_list or "", company_ids=args.company_ids)
+        company_list=args.company_list or "", company_ids=args.company_ids,
+        rescrape=args.rescrape)

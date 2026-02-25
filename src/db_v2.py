@@ -61,6 +61,12 @@ CREATE TABLE IF NOT EXISTS doc_texts (
     extracted_at        TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS scrape_watermarks (
+    company_id      TEXT PRIMARY KEY,
+    scraped_through  TEXT NOT NULL,
+    updated_at       TEXT DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_reports_date ON reports(report_date);
 CREATE INDEX IF NOT EXISTS idx_reports_company ON reports(company_id);
 CREATE INDEX IF NOT EXISTS idx_reports_form_type ON reports(form_type);
@@ -212,11 +218,16 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_parse(self, limit: int = 0) -> list[dict]:
-        """Reports with form_html but not yet parsed."""
-        sql = """SELECT id, reference_number, form_type, form_html FROM reports
-                 WHERE form_html IS NOT NULL AND parsed_at IS NULL
-                 ORDER BY id"""
+    def get_reports_needing_parse(self, limit: int = 0, reprocess: bool = False) -> list[dict]:
+        """Reports with form_html but not yet parsed (or all with form_html if reprocess)."""
+        if reprocess:
+            sql = """SELECT id, reference_number, form_type, form_html FROM reports
+                     WHERE form_html IS NOT NULL
+                     ORDER BY id"""
+        else:
+            sql = """SELECT id, reference_number, form_type, form_html FROM reports
+                     WHERE form_html IS NOT NULL AND parsed_at IS NULL
+                     ORDER BY id"""
         if limit:
             sql += f" LIMIT {limit}"
         return [dict(r) for r in self.conn.execute(sql).fetchall()]
@@ -236,21 +247,29 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_index(self, limit: int = 0) -> list[dict]:
+    def get_reports_needing_index(self, limit: int = 0, reprocess: bool = False) -> list[dict]:
         """Reports that need (re)indexing: parsed but never indexed,
-        OR already indexed but have attachments extracted since last index."""
-        sql = """SELECT r.*,
-                 (SELECT COUNT(*) FROM attachments a WHERE a.report_id = r.id) as att_count
-                 FROM reports r
-                 WHERE r.parsed_at IS NOT NULL
-                   AND (r.indexed_at IS NULL
-                        OR EXISTS (
-                            SELECT 1 FROM attachments a
-                            WHERE a.report_id = r.id
-                              AND a.extracted_at IS NOT NULL
-                              AND a.indexed_at IS NULL
-                        ))
-                 ORDER BY r.id"""
+        OR already indexed but have attachments extracted since last index.
+        When reprocess=True, returns all parsed reports."""
+        if reprocess:
+            sql = """SELECT r.*,
+                     (SELECT COUNT(*) FROM attachments a WHERE a.report_id = r.id) as att_count
+                     FROM reports r
+                     WHERE r.parsed_at IS NOT NULL
+                     ORDER BY r.id"""
+        else:
+            sql = """SELECT r.*,
+                     (SELECT COUNT(*) FROM attachments a WHERE a.report_id = r.id) as att_count
+                     FROM reports r
+                     WHERE r.parsed_at IS NOT NULL
+                       AND (r.indexed_at IS NULL
+                            OR EXISTS (
+                                SELECT 1 FROM attachments a
+                                WHERE a.report_id = r.id
+                                  AND a.extracted_at IS NOT NULL
+                                  AND a.indexed_at IS NULL
+                            ))
+                     ORDER BY r.id"""
         if limit:
             sql += f" LIMIT {limit}"
         return [dict(r) for r in self.conn.execute(sql).fetchall()]
@@ -291,13 +310,20 @@ class Database:
         )
         self.conn.commit()
 
-    def get_pending_attachments(self) -> list[dict]:
-        cur = self.conn.execute(
-            """SELECT a.*, r.company_name, r.form_type FROM attachments a
-               JOIN reports r ON r.id = a.report_id
-               WHERE a.download_status = 'pending'
-               ORDER BY a.id"""
-        )
+    def get_pending_attachments(self, reprocess: bool = False) -> list[dict]:
+        if reprocess:
+            cur = self.conn.execute(
+                """SELECT a.*, r.company_name, r.form_type FROM attachments a
+                   JOIN reports r ON r.id = a.report_id
+                   ORDER BY a.id"""
+            )
+        else:
+            cur = self.conn.execute(
+                """SELECT a.*, r.company_name, r.form_type FROM attachments a
+                   JOIN reports r ON r.id = a.report_id
+                   WHERE a.download_status = 'pending'
+                   ORDER BY a.id"""
+            )
         return [dict(r) for r in cur.fetchall()]
 
     def mark_downloaded(self, att_id: int, local_path: str):
@@ -315,13 +341,20 @@ class Database:
         )
         self.conn.commit()
 
-    def get_downloaded_unextracted(self) -> list[dict]:
-        """Attachments downloaded but text not yet extracted."""
-        cur = self.conn.execute(
-            """SELECT * FROM attachments
-               WHERE download_status = 'downloaded' AND extracted_at IS NULL
-               ORDER BY id"""
-        )
+    def get_downloaded_unextracted(self, reprocess: bool = False) -> list[dict]:
+        """Attachments downloaded but text not yet extracted (or all downloaded if reprocess)."""
+        if reprocess:
+            cur = self.conn.execute(
+                """SELECT * FROM attachments
+                   WHERE download_status = 'downloaded'
+                   ORDER BY id"""
+            )
+        else:
+            cur = self.conn.execute(
+                """SELECT * FROM attachments
+                   WHERE download_status = 'downloaded' AND extracted_at IS NULL
+                   ORDER BY id"""
+            )
         return [dict(r) for r in cur.fetchall()]
 
     def set_attachment_extracted(self, att_id: int):
@@ -428,6 +461,29 @@ class Database:
                 "indexed": r("SELECT COUNT(*) FROM attachments WHERE indexed_at IS NOT NULL").fetchone()[0],
             },
         }
+
+    # ── Watermarks ─────────────────────────────────────────────
+
+    def get_watermark(self, company_id: str) -> str | None:
+        """Return the scraped_through ISO date for a company, or None."""
+        cur = self.conn.execute(
+            "SELECT scraped_through FROM scrape_watermarks WHERE company_id = ?",
+            (company_id,),
+        )
+        row = cur.fetchone()
+        return row["scraped_through"] if row else None
+
+    def set_watermark(self, company_id: str, scraped_through: str):
+        """Upsert the high-water mark for a company."""
+        self.conn.execute(
+            """INSERT INTO scrape_watermarks (company_id, scraped_through, updated_at)
+               VALUES (?, ?, datetime('now'))
+               ON CONFLICT(company_id) DO UPDATE SET
+                   scraped_through = excluded.scraped_through,
+                   updated_at = datetime('now')""",
+            (company_id, scraped_through),
+        )
+        self.conn.commit()
 
     def form_type_counts(self) -> list[dict]:
         cur = self.conn.execute(
