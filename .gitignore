@@ -9,3 +9,4 @@ misc/*.html
 data/magna_v2.db
 data/magna_v2.db-shm
 data/magna_v2.db-wal
+tmp/

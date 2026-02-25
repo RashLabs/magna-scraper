@@ -12,6 +12,17 @@ class PipelineStartRequest(BaseModel):
     reprocess: bool = False  # when True, re-run parse/download/extract/index on already-processed items
 
 
+class StageDetailResponse(BaseModel):
+    name: str
+    status: str = "pending"  # pending|running|done|error
+    processed: int = 0
+    total: int = 0
+    started_at: str | None = None
+    finished_at: str | None = None
+    duration_s: float | None = None
+    errors: list[str] = []
+
+
 class PipelineStatusResponse(BaseModel):
     status: str = "idle"  # idle|running|done|error
     progress: str = ""
@@ -19,6 +30,9 @@ class PipelineStatusResponse(BaseModel):
     total: int = 0
     error: str | None = None
     started_at: str | None = None
+    finished_at: str | None = None
+    stages_detail: list[StageDetailResponse] | None = None
+    log_file: str | None = None
 
 
 class PipelineLogResponse(BaseModel):

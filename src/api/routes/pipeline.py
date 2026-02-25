@@ -14,14 +14,34 @@ router = APIRouter(prefix="/pipeline", tags=["pipeline"])
 
 def _get_stage_status(stage: str) -> dict:
     job = jobs[stage]
-    return {
+    result = {
         "status": job.status,
         "progress": job.progress,
         "processed": job.processed,
         "total": job.total,
         "error": job.error,
         "started_at": job.started_at,
+        "finished_at": job.finished_at,
     }
+    # For run_all: include per-stage detail and log file path
+    if stage == "run_all":
+        if job.stages_detail is not None:
+            result["stages_detail"] = [
+                {
+                    "name": d.name,
+                    "status": d.status,
+                    "processed": d.processed,
+                    "total": d.total,
+                    "started_at": d.started_at,
+                    "finished_at": d.finished_at,
+                    "duration_s": d.duration_s,
+                    "errors": d.errors,
+                }
+                for d in job.stages_detail
+            ]
+        if job.log_file:
+            result["log_file"] = job.log_file
+    return result
 
 
 @router.get("/status")

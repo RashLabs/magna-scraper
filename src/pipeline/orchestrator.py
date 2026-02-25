@@ -1,6 +1,7 @@
 """Run-all orchestrator: scrape → parse → download → extract → index with retry."""
 
 import logging
+from datetime import datetime
 
 from db_v2 import Database
 
@@ -68,11 +69,14 @@ def _run_stage(stage: str, cancel_check, progress_cb,
 def run(since: str = "2024-01-01", headless: bool = True,
         company_list: str = "", company_ids: list[str] | None = None,
         rescrape: bool = False, reprocess: bool = False,
-        cancel_check=None, progress_cb=None):
+        cancel_check=None, progress_cb=None,
+        stages_detail: list | None = None):
     """Run all pipeline stages sequentially with retry on remaining items.
 
     Args match the scraper's run() signature for the scrape-specific params.
     cancel_check / progress_cb are wired by the job framework in deps.py.
+    stages_detail: if provided (by deps.py for run_all), each entry is a StageDetail
+        that gets updated with per-stage timing, progress, and errors.
     """
     scrape_kwargs = {
         "since": since,
@@ -90,19 +94,55 @@ def run(since: str = "2024-01-01", headless: bool = True,
             log.info("Run-all cancelled before stage '%s'", stage)
             return
 
+        detail = stages_detail[stage_idx] if stages_detail else None
+
         stage_label = f"[{stage_idx + 1}/{total_stages}] {stage}"
         log.info("━━━ %s: starting ━━━", stage_label)
+
+        # Update StageDetail
+        if detail:
+            detail.status = "running"
+            detail.started_at = datetime.now().isoformat()
 
         if progress_cb:
             progress_cb(stage_idx, total_stages)
 
+        # Build a sub-stage progress callback that updates both StageDetail
+        # and the overall run-all fractional progress
+        def _make_sub_progress_cb(idx, det):
+            def _sub_cb(done, tot):
+                if det:
+                    det.processed = done
+                    det.total = tot
+                if progress_cb and tot > 0:
+                    # Fractional progress: stage_idx + fraction through current stage
+                    frac = idx + (done / tot)
+                    progress_cb(frac, total_stages)
+            return _sub_cb
+
+        sub_progress_cb = _make_sub_progress_cb(stage_idx, detail)
+
+        stage_error = None
         for attempt in range(1, MAX_STAGE_RETRIES + 1):
             if cancel_check and cancel_check():
                 log.info("Run-all cancelled during stage '%s'", stage)
                 return
 
-            _run_stage(stage, cancel_check, progress_cb=None,
-                       scrape_kwargs=scrape_kwargs, reprocess=reprocess)
+            try:
+                _run_stage(stage, cancel_check, progress_cb=sub_progress_cb,
+                           scrape_kwargs=scrape_kwargs, reprocess=reprocess)
+            except Exception as e:
+                stage_error = str(e)
+                log.exception("Stage '%s' attempt %d failed: %s", stage, attempt, e)
+                if detail:
+                    detail.errors.append(f"Attempt {attempt}: {e}")
+                if attempt < MAX_STAGE_RETRIES:
+                    log.info("%s: retrying after error (attempt %d/%d)",
+                             stage_label, attempt + 1, MAX_STAGE_RETRIES)
+                    continue
+                else:
+                    log.warning("%s: failed after %d attempts", stage_label, MAX_STAGE_RETRIES)
+                    break
 
             if cancel_check and cancel_check():
                 log.info("Run-all cancelled during stage '%s'", stage)
@@ -111,6 +151,7 @@ def run(since: str = "2024-01-01", headless: bool = True,
             remaining = _count_remaining(db, stage)
             if remaining == 0:
                 log.info("━━━ %s: complete ━━━", stage_label)
+                stage_error = None
                 break
 
             if attempt < MAX_STAGE_RETRIES:
@@ -119,6 +160,14 @@ def run(since: str = "2024-01-01", headless: bool = True,
             else:
                 log.warning("%s: finished with %d items still remaining after %d attempts",
                             stage_label, remaining, MAX_STAGE_RETRIES)
+
+        # Finalize StageDetail
+        if detail:
+            detail.finished_at = datetime.now().isoformat()
+            started = datetime.fromisoformat(detail.started_at)
+            finished = datetime.fromisoformat(detail.finished_at)
+            detail.duration_s = round((finished - started).total_seconds(), 1)
+            detail.status = "error" if (stage_error or detail.errors) else "done"
 
     # Final verification
     stats = db.stats()

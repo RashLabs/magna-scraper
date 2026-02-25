@@ -6,6 +6,7 @@ from pathlib import Path
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
+TMP_DIR = PROJECT_ROOT / "tmp"
 DB_PATH = DATA_DIR / "magna_v2.db"
 ATTACHMENTS_DIR = DATA_DIR / "attachments"
 COMPANY_LIST_PATH = DATA_DIR / "ta125_magna.json"
@@ -13,6 +14,7 @@ COMPANY_LIST_PATH = DATA_DIR / "ta125_magna.json"
 # Ensure dirs exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 ATTACHMENTS_DIR.mkdir(parents=True, exist_ok=True)
+TMP_DIR.mkdir(parents=True, exist_ok=True)
 
 # MAGNA
 MAGNA_URL = "https://www.magna.isa.gov.il/"

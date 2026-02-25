@@ -32,6 +32,22 @@ STAGES = ("scrape", "parse", "download", "extract", "index", "run_all")
 
 StageStatus = Literal["idle", "running", "done", "error"]
 
+# Sub-stage detail statuses (used inside run_all's stages_detail)
+StageDetailStatus = Literal["pending", "running", "done", "error"]
+
+
+@dataclass
+class StageDetail:
+    """Tracks per-stage progress inside a run_all execution."""
+    name: str
+    status: StageDetailStatus = "pending"
+    processed: int = 0
+    total: int = 0
+    started_at: str | None = None
+    finished_at: str | None = None
+    duration_s: float | None = None
+    errors: list[str] = field(default_factory=list)
+
 
 @dataclass
 class JobState:
@@ -42,8 +58,11 @@ class JobState:
     error: str | None = None
     log_lines: deque = field(default_factory=lambda: deque(maxlen=200))
     started_at: str | None = None
+    finished_at: str | None = None
     cancel_requested: bool = False
     thread: threading.Thread | None = field(default=None, repr=False)
+    stages_detail: list[StageDetail] | None = None
+    log_file: str | None = None
 
     def reset(self):
         self.status = "idle"
@@ -53,8 +72,11 @@ class JobState:
         self.error = None
         self.log_lines.clear()
         self.started_at = None
+        self.finished_at = None
         self.cancel_requested = False
         self.thread = None
+        self.stages_detail = None
+        self.log_file = None
 
 
 # One JobState per stage
@@ -86,6 +108,21 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
     job.status = "running"
     job.started_at = datetime.now().isoformat()
 
+    # For run_all: initialize stages_detail and file logging
+    file_handler = None
+    if stage == "run_all":
+        from config import TMP_DIR
+        stage_names = ["scrape", "parse", "download", "extract", "index"]
+        job.stages_detail = [StageDetail(name=n) for n in stage_names]
+
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        log_path = TMP_DIR / f"magna-run-{timestamp}.log"
+        job.log_file = str(log_path)
+        # Open unbuffered so log lines appear in the file immediately
+        stream = open(str(log_path), "a", encoding="utf-8", buffering=1)  # line-buffered
+        file_handler = logging.StreamHandler(stream)
+        file_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s %(message)s"))
+
     # Set up log capture — attach handler ONLY to the stage's pipeline logger,
     # not the root logger. This prevents log contamination between stages.
     handler = JobLogHandler(job)
@@ -111,12 +148,16 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
                 loggers_to_attach.append(logging.getLogger(name))
         for lgr in loggers_to_attach:
             lgr.addHandler(handler)
+            if file_handler:
+                lgr.addHandler(file_handler)
             lgr.setLevel(logging.INFO)
 
         try:
             target_kwargs = kwargs or {}
             target_kwargs["cancel_check"] = lambda: job.cancel_requested
             target_kwargs["progress_cb"] = lambda done, tot: _update_progress(job, done, tot)
+            if stage == "run_all":
+                target_kwargs["stages_detail"] = job.stages_detail
             target(**target_kwargs)
             if job.cancel_requested:
                 job.status = "idle"
@@ -127,8 +168,15 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
             job.status = "error"
             log.exception(f"Job {stage} failed")
         finally:
+            job.finished_at = datetime.now().isoformat()
             for lgr in loggers_to_attach:
                 lgr.removeHandler(handler)
+                if file_handler:
+                    lgr.removeHandler(file_handler)
+            if file_handler:
+                file_handler.close()
+                if hasattr(file_handler, 'stream') and file_handler.stream:
+                    file_handler.stream.close()
 
     t = threading.Thread(target=_run, daemon=True, name=f"pipeline-{stage}")
     job.thread = t
@@ -136,10 +184,14 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
     return True
 
 
-def _update_progress(job: JobState, done: int, total: int):
-    job.processed = done
+def _update_progress(job: JobState, done: int | float, total: int):
+    job.processed = int(done)
     job.total = total
-    job.progress = f"{done}/{total}"
+    if isinstance(done, float) and not done.is_integer():
+        # Fractional progress: e.g. 2.7 = "stage 3, 70% through"
+        job.progress = f"{done:.1f}/{total}"
+    else:
+        job.progress = f"{int(done)}/{total}"
 
 
 def stop_job(stage: str) -> bool:

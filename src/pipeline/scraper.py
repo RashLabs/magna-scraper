@@ -161,12 +161,16 @@ def _parse_attachments(item: dict) -> list[dict]:
     return attachments
 
 
-def _process_reports(db: Database, pw_page: Page, reports: list[dict], stats: dict,
+def _process_reports(db: Database, pw_page: Page, reports: list, stats: dict,
                      company_id: str | None = None, company_name: str | None = None,
                      fetch_html: bool = True, cancel_check=None):
     for item in reports:
         if cancel_check and cancel_check():
             return
+
+        if not isinstance(item, dict):
+            log.warning("  Skipping non-dict report item: %s", type(item).__name__)
+            continue
 
         parsed = _parse_report(item)
         ref = parsed["reference_number"]
