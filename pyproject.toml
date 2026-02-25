@@ -1,0 +1,21 @@
+[project]
+name = "magna-scraper"
+version = "2.0.0"
+description = "MAGNA ISA corporate filings scraper, processor, and Qdrant indexer"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "playwright>=1.40",
+    "meowpdf>=0.1",
+    "google-genai>=1.0",
+    "qdrant-client>=1.12",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["httpx", "pytest"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

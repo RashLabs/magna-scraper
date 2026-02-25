@@ -1,0 +1,1202 @@
+[
+  {
+    "name": "טבע",
+    "symbol": "טבע",
+    "tase_number": "629014",
+    "isin": "IL0006290147",
+    "weight": "5.01653",
+    "market_cap": "124,966",
+    "magna_id": 3615,
+    "magna_name": "הון הטבע בע\"מ"
+  },
+  {
+    "name": "דיסקונט       א",
+    "symbol": "דסקנט",
+    "tase_number": "691212",
+    "isin": "IL0006912120",
+    "weight": "4.99027",
+    "market_cap": "48,111",
+    "magna_id": 160,
+    "magna_name": "בנק דיסקונט לישראל בע\"מ"
+  },
+  {
+    "name": "אלביט מערכות",
+    "symbol": "אלבמע",
+    "tase_number": "1081124",
+    "isin": "IL0010811243",
+    "weight": "4.8776",
+    "market_cap": "107,926",
+    "magna_id": 2718,
+    "magna_name": "אלביט מערכות אבטחה בע\"מ"
+  },
+  {
+    "name": "פועלים",
+    "symbol": "פעלים",
+    "tase_number": "662577",
+    "isin": "IL0006625771",
+    "weight": "4.78886",
+    "market_cap": "105,581",
+    "magna_id": 165,
+    "magna_name": "בנק הפועלים בע\"מ"
+  },
+  {
+    "name": "לאומי",
+    "symbol": "לאומי",
+    "tase_number": "604611",
+    "isin": "IL0006046119",
+    "weight": "4.63767",
+    "market_cap": "112,929",
+    "magna_id": 12,
+    "magna_name": "אגיש הובלה בין לאומית בע\"מ"
+  },
+  {
+    "name": "טאואר",
+    "symbol": "טאואר",
+    "tase_number": "1082379",
+    "isin": "IL0010823792",
+    "weight": "4.56912",
+    "market_cap": "44,496",
+    "magna_id": 309,
+    "magna_name": "טאואר סמיקונדקטור בע\"מ"
+  },
+  {
+    "name": "נובה",
+    "symbol": "נובה",
+    "tase_number": "1084557",
+    "isin": "IL0010845571",
+    "weight": "4.37552",
+    "market_cap": "42,185",
+    "magna_id": 1877,
+    "magna_name": "אנובה חתמויות בע\"מ"
+  },
+  {
+    "name": "הפניקס",
+    "symbol": "פנקס",
+    "tase_number": "767012",
+    "isin": "IL0007670123",
+    "weight": "3.98239",
+    "market_cap": "42,660",
+    "magna_id": 2639,
+    "magna_name": "הפניקס גיוסי הון (2009) בע\"מ"
+  },
+  {
+    "name": "מזרחי טפחות",
+    "symbol": "מזטפ",
+    "tase_number": "695437",
+    "isin": "IL0006954379",
+    "weight": "3.9024",
+    "market_cap": "63,768",
+    "magna_id": 1728,
+    "magna_name": "אתגר חברה לניהול תיקי השקעות מקבוצת מזרחי טפחות בע\"מ"
+  },
+  {
+    "name": "אנלייט אנרגיה",
+    "symbol": "אנלט",
+    "tase_number": "720011",
+    "isin": "IL0007200111",
+    "weight": "3.01352",
+    "market_cap": "29,380",
+    "magna_id": 516,
+    "magna_name": "אנלייט אנרגיה מתחדשת בע\"מ"
+  },
+  {
+    "name": "נייס",
+    "symbol": "נייס",
+    "tase_number": "273011",
+    "isin": "IL0002730112",
+    "weight": "2.30872",
+    "market_cap": "22,259",
+    "magna_id": 498,
+    "magna_name": "נייס בע\"מ"
+  },
+  {
+    "name": "נקסט ויז'ן",
+    "symbol": "נקסנ",
+    "tase_number": "1176593",
+    "isin": "IL0011765935",
+    "weight": "2.19954",
+    "market_cap": "30,315",
+    "magna_id": 3585,
+    "magna_name": "נקסט ויז'ן מערכות מיוצבות בע\"מ"
+  },
+  {
+    "name": "אורמת טכנו",
+    "symbol": "ארמת",
+    "tase_number": "1134402",
+    "isin": "US6866881021",
+    "weight": "2.18218",
+    "market_cap": "21,039",
+    "magna_id": 2979,
+    "magna_name": "אורמת טכנולוגיות אינק."
+  },
+  {
+    "name": "בזק",
+    "symbol": "בזק",
+    "tase_number": "230011",
+    "isin": "IL0002300114",
+    "weight": "2.08595",
+    "market_cap": "22,855",
+    "magna_id": 2726,
+    "magna_name": "בזק בינלאומי בע\"מ"
+  },
+  {
+    "name": "הראל השקעות",
+    "symbol": "הראל",
+    "tase_number": "585018",
+    "isin": "IL0005850180",
+    "weight": "1.94009",
+    "market_cap": "34,657",
+    "magna_id": 254,
+    "magna_name": "הראל השקעות בביטוח ושירותים פיננסים בע\"מ"
+  },
+  {
+    "name": "עזריאלי קבוצה",
+    "symbol": "עזרל",
+    "tase_number": "1119478",
+    "isin": "IL0011194789",
+    "weight": "1.84911",
+    "market_cap": "57,508",
+    "magna_id": 2675,
+    "magna_name": "קבוצת עזריאלי בע\"מ"
+  },
+  {
+    "name": "כלל עסקי ביטוח",
+    "symbol": "כללבט",
+    "tase_number": "224014",
+    "isin": "IL0002240146",
+    "weight": "1.81932",
+    "market_cap": "20,396",
+    "magna_id": 367,
+    "magna_name": "כלל החזקות עסקי ביטוח בע\"מ"
+  },
+  {
+    "name": "או פי סי אנרגיה",
+    "symbol": "אפסא",
+    "tase_number": "1141571",
+    "isin": "IL0011415713",
+    "weight": "1.60161",
+    "market_cap": "29,135",
+    "magna_id": 3167,
+    "magna_name": "או.פי.סי אנרגיה בע\"מ"
+  },
+  {
+    "name": "בינלאומי",
+    "symbol": "בנלמ",
+    "tase_number": "593038",
+    "isin": "IL0005930388",
+    "weight": "1.54658",
+    "market_cap": "28,674",
+    "magna_id": 62,
+    "magna_name": "אינדקס מדדים בינלאומיים בע\"מ"
+  },
+  {
+    "name": "קמטק",
+    "symbol": "קמטק",
+    "tase_number": "1095264",
+    "isin": "IL0010952641",
+    "weight": "1.43044",
+    "market_cap": "22,243",
+    "magna_id": 616,
+    "magna_name": "קמטק בע\"מ"
+  },
+  {
+    "name": "נאוויטס פטר יהש",
+    "symbol": "נאפט",
+    "tase_number": "1141969",
+    "isin": "IL0011419699",
+    "weight": "1.40683",
+    "market_cap": "15,434",
+    "magna_id": 3160,
+    "magna_name": "נאוויטס בקסקין מימון בע\"מ"
+  },
+  {
+    "name": "הבורסה לניע בתא",
+    "symbol": "ברסה",
+    "tase_number": "1159029",
+    "isin": "IL0011590291",
+    "weight": "1.3507",
+    "market_cap": "14,632",
+    "magna_id": 1484,
+    "magna_name": "הבורסה לניירות ערך בתל - אביב בע\"מ"
+  },
+  {
+    "name": "ביג",
+    "symbol": "ביג",
+    "tase_number": "1097260",
+    "isin": "IL0010972607",
+    "weight": "1.31648",
+    "market_cap": "19,542",
+    "magna_id": 3426,
+    "magna_name": "ביג - טק 50 מו\"פ - שותפות מוגבלת"
+  },
+  {
+    "name": "איי.סי.אל",
+    "symbol": "איסל",
+    "tase_number": "281014",
+    "isin": "IL0002810146",
+    "weight": "1.25947",
+    "market_cap": "21,683",
+    "magna_id": 365,
+    "magna_name": "איי.סי.אל גרופ בע\"מ"
+  },
+  {
+    "name": "ניו-מד אנרג יהש",
+    "symbol": "נומד",
+    "tase_number": "475020",
+    "isin": "IL0004750209",
+    "weight": "1.15549",
+    "market_cap": "24,756",
+    "magna_id": 228,
+    "magna_name": "ניו-מד אנרג'י - שותפות מוגבלת"
+  },
+  {
+    "name": "מגדל ביטוח",
+    "symbol": "מגדל",
+    "tase_number": "1081165",
+    "isin": "IL0010811656",
+    "weight": "1.13163",
+    "market_cap": "19,837",
+    "magna_id": 409,
+    "magna_name": "מגדל אחזקות ביטוח ופיננסים בע\"מ"
+  },
+  {
+    "name": "מליסרון",
+    "symbol": "מלסרן",
+    "tase_number": "323014",
+    "isin": "IL0003230146",
+    "weight": "1.11837",
+    "market_cap": "22,019",
+    "magna_id": 442,
+    "magna_name": "מליסרון בע\"מ"
+  },
+  {
+    "name": "מנורה מב החז",
+    "symbol": "ממהח",
+    "tase_number": "566018",
+    "isin": "IL0005660183",
+    "weight": "1.09987",
+    "market_cap": "31,233",
+    "magna_id": 451,
+    "magna_name": "מנורה מבטחים החזקות בע\"מ"
+  },
+  {
+    "name": "דלק קבוצה",
+    "symbol": "דלקקב",
+    "tase_number": "1084128",
+    "isin": "IL0010841281",
+    "weight": "0.96363",
+    "market_cap": "18,581",
+    "magna_id": 595,
+    "magna_name": "קבוצת דלק בע\"מ"
+  },
+  {
+    "name": "שופרסל",
+    "symbol": "שפרסל",
+    "tase_number": "777037",
+    "isin": "IL0007770378",
+    "weight": "0.92437",
+    "market_cap": "11,882",
+    "magna_id": 664,
+    "magna_name": "שופרסל בע\"מ"
+  },
+  {
+    "name": "מגה אור",
+    "symbol": "מגאר",
+    "tase_number": "1104488",
+    "isin": "IL0011044885",
+    "weight": "0.91033",
+    "market_cap": "17,721",
+    "magna_id": 2297,
+    "magna_name": "מגה אור החזקות בע\"מ"
+  },
+  {
+    "name": "פז אנרגיה",
+    "symbol": "פז",
+    "tase_number": "1100007",
+    "isin": "IL0011000077",
+    "weight": "0.85486",
+    "market_cap": "8,768",
+    "magna_id": 2119,
+    "magna_name": "פז קמעונאות ואנרגיה בע\"מ"
+  },
+  {
+    "name": "מבנה",
+    "symbol": "מבנה",
+    "tase_number": "226019",
+    "isin": "IL0002260193",
+    "weight": "0.83336",
+    "market_cap": "10,170",
+    "magna_id": 291,
+    "magna_name": "מבנה נדל\"ן (כ.ד) בע\"מ"
+  },
+  {
+    "name": "שטראוס",
+    "symbol": "שטרס",
+    "tase_number": "746016",
+    "isin": "IL0007460160",
+    "weight": "0.82904",
+    "market_cap": "16,324",
+    "magna_id": 546,
+    "magna_name": "שטראוס גרופ בע\"מ"
+  },
+  {
+    "name": "שיכון ובינוי",
+    "symbol": "שוב",
+    "tase_number": "1081942",
+    "isin": "IL0010819428",
+    "weight": "0.68321",
+    "market_cap": "10,798",
+    "magna_id": 3635,
+    "magna_name": "שיכון ובינוי אנרגיה בע\"מ"
+  },
+  {
+    "name": "בית שמש",
+    "symbol": "מנבש",
+    "tase_number": "1081561",
+    "isin": "IL0010815616",
+    "weight": "0.67562",
+    "market_cap": "8,087",
+    "magna_id": 449,
+    "magna_name": "מנועי בית שמש אחזקות (1997) בע\"מ"
+  },
+  {
+    "name": "אנרג'יקס",
+    "symbol": "אנרג",
+    "tase_number": "1123355",
+    "isin": "IL0011233553",
+    "weight": "0.64345",
+    "market_cap": "12,668",
+    "magna_id": 2762,
+    "magna_name": "אנרג'יקס - אנרגיות מתחדשות בע\"מ"
+  },
+  {
+    "name": "אלוני חץ",
+    "symbol": "אלחץ",
+    "tase_number": "390013",
+    "isin": "IL0003900136",
+    "weight": "0.62476",
+    "market_cap": "8,371",
+    "magna_id": 79,
+    "magna_name": "אלוני-חץ נכסים והשקעות בע\"מ"
+  },
+  {
+    "name": "פרטנר",
+    "symbol": "פרטנר",
+    "tase_number": "1083484",
+    "isin": "IL0010834849",
+    "weight": "0.60339",
+    "market_cap": "7,462",
+    "magna_id": 22,
+    "magna_name": "אומגה פרטנרס בע\"מ"
+  },
+  {
+    "name": "אמות",
+    "symbol": "אמות",
+    "tase_number": "1097278",
+    "isin": "IL0010972789",
+    "weight": "0.57847",
+    "market_cap": "11,154",
+    "magna_id": 2144,
+    "magna_name": "אמות השקעות בע\"מ"
+  },
+  {
+    "name": "אנרג'יאן",
+    "symbol": "אנאג",
+    "tase_number": "1155290",
+    "isin": "GB00BG12Y042",
+    "weight": "0.57679",
+    "market_cap": "6,951",
+    "magna_id": 3295,
+    "magna_name": "אנרג'יאן פי אל סי"
+  },
+  {
+    "name": "אל על",
+    "symbol": "אלעל",
+    "tase_number": "1087824",
+    "isin": "IL0010878242",
+    "weight": "0.56884",
+    "market_cap": "9,820",
+    "magna_id": 1483,
+    "magna_name": "אל על נתיבי אויר לישראל בע\"מ"
+  },
+  {
+    "name": "ריט 1",
+    "symbol": "ריט1",
+    "tase_number": "1098920",
+    "isin": "IL0010989205",
+    "weight": "0.54745",
+    "market_cap": "5,338",
+    "magna_id": 2174,
+    "magna_name": "ריט 1 בע\"מ"
+  },
+  {
+    "name": "מיטב השקעות",
+    "symbol": "מיטב",
+    "tase_number": "1081843",
+    "isin": "IL0010818438",
+    "weight": "0.52908",
+    "market_cap": "10,854",
+    "magna_id": 176,
+    "magna_name": "מיטב בית השקעות בע\"מ"
+  },
+  {
+    "name": "דוראל אנרגיה",
+    "symbol": "דורל",
+    "tase_number": "1166768",
+    "isin": "IL0011667685",
+    "weight": "0.51424",
+    "market_cap": "11,752",
+    "magna_id": 3434,
+    "magna_name": "קבוצת דוראל משאבי אנרגיה מתחדשת בע\"מ"
+  },
+  {
+    "name": "פיבי",
+    "symbol": "פיבי",
+    "tase_number": "763011",
+    "isin": "IL0007630119",
+    "weight": "0.49804",
+    "market_cap": "12,504",
+    "magna_id": 563,
+    "magna_name": "פ.י.ב.י. אחזקות בע\"מ"
+  },
+  {
+    "name": "תורפז",
+    "symbol": "תרפז",
+    "tase_number": "1175611",
+    "isin": "IL0011756116",
+    "weight": "0.46991",
+    "market_cap": "8,394",
+    "magna_id": 3602,
+    "magna_name": "תורפז תעשיות בע\"מ"
+  },
+  {
+    "name": "פתאל החזקות",
+    "symbol": "פתאל",
+    "tase_number": "1143429",
+    "isin": "IL0011434292",
+    "weight": "0.46905",
+    "market_cap": "10,279",
+    "magna_id": 2741,
+    "magna_name": "פתאל החזקות (1998) בע\"מ"
+  },
+  {
+    "name": "קנון",
+    "symbol": "קנון",
+    "tase_number": "1134139",
+    "isin": "SG9999012629",
+    "weight": "0.40941",
+    "market_cap": "12,985",
+    "magna_id": 2951,
+    "magna_name": "קנון הולדינגס לימיטד"
+  },
+  {
+    "name": "שפיר הנדסה",
+    "symbol": "שפהנ",
+    "tase_number": "1133875",
+    "isin": "IL0011338758",
+    "weight": "0.4001",
+    "market_cap": "11,762",
+    "magna_id": 2897,
+    "magna_name": "שפיר הנדסה ותעשיה בע\"מ"
+  },
+  {
+    "name": "ישראמקו     יהש",
+    "symbol": "ישרמק",
+    "tase_number": "232017",
+    "isin": "IL0002320179",
+    "weight": "0.38404",
+    "market_cap": "6,013",
+    "magna_id": 356,
+    "magna_name": "ישראמקו נגב 2  שותפות מוגבלת"
+  },
+  {
+    "name": "ארית תעשיות",
+    "symbol": "ארית",
+    "tase_number": "587014",
+    "isin": "IL0005870147",
+    "weight": "0.38391",
+    "market_cap": "6,273",
+    "magna_id": 131,
+    "magna_name": "ארית תעשיות בע\"מ"
+  },
+  {
+    "name": "דמרי",
+    "symbol": "דמרי",
+    "tase_number": "1090315",
+    "isin": "IL0010903156",
+    "weight": "0.37823",
+    "market_cap": "10,131",
+    "magna_id": 2873,
+    "magna_name": "י.ח. דמרי אחזקות (2001) בע\"מ"
+  },
+  {
+    "name": "חברה לישראל",
+    "symbol": "חל",
+    "tase_number": "576017",
+    "isin": "IL0005760173",
+    "weight": "0.36446",
+    "market_cap": "6,890",
+    "magna_id": 246,
+    "magna_name": "החברה לישראל בע\"מ"
+  },
+  {
+    "name": "נופר אנרג'י",
+    "symbol": "נופר",
+    "tase_number": "1170877",
+    "isin": "IL0011708778",
+    "weight": "0.36389",
+    "market_cap": "6,383",
+    "magna_id": 3474,
+    "magna_name": "ע.י. נופר אנרג'י בע\"מ"
+  },
+  {
+    "name": "אלקטרה",
+    "symbol": "אלקטה",
+    "tase_number": "739037",
+    "isin": "IL0007390375",
+    "weight": "0.3635",
+    "market_cap": "8,112",
+    "magna_id": 84,
+    "magna_name": "אלקטרה בע\"מ"
+  },
+  {
+    "name": "אאורה",
+    "symbol": "אארה",
+    "tase_number": "373019",
+    "isin": "IL0003730194",
+    "weight": "0.35653",
+    "market_cap": "6,486",
+    "magna_id": 6,
+    "magna_name": "אאורה השקעות בע\"מ"
+  },
+  {
+    "name": "גילת",
+    "symbol": "גילת",
+    "tase_number": "1082510",
+    "isin": "IL0010825102",
+    "weight": "0.3524",
+    "market_cap": "3,398",
+    "magna_id": 193,
+    "magna_name": "גילת טלקום גלובל בע\"מ"
+  },
+  {
+    "name": "סלקום",
+    "symbol": "סלקם",
+    "tase_number": "1101534",
+    "isin": "IL0011015349",
+    "weight": "0.34079",
+    "market_cap": "6,131",
+    "magna_id": 2458,
+    "magna_name": "סלקום ישראל בע\"מ"
+  },
+  {
+    "name": "מטריקס",
+    "symbol": "מטרקס",
+    "tase_number": "445015",
+    "isin": "IL0004450156",
+    "weight": "0.33713",
+    "market_cap": "6,253",
+    "magna_id": 263,
+    "magna_name": "מולטימטריקס בע\"מ"
+  },
+  {
+    "name": "רציו      יהש",
+    "symbol": "רצו",
+    "tase_number": "394015",
+    "isin": "IL0003940157",
+    "weight": "0.33524",
+    "market_cap": "5,316",
+    "magna_id": 656,
+    "magna_name": "רציו אנרגיות - שותפות מוגבלת"
+  },
+  {
+    "name": "ישראכרט",
+    "symbol": "ישכט",
+    "tase_number": "1157403",
+    "isin": "IL0011574030",
+    "weight": "0.32975",
+    "market_cap": "5,299",
+    "magna_id": 3296,
+    "magna_name": "ישראכרט בעמ"
+  },
+  {
+    "name": "ישראל קנדה",
+    "symbol": "ישקנ",
+    "tase_number": "434019",
+    "isin": "IL0004340191",
+    "weight": "0.30629",
+    "market_cap": "7,610",
+    "magna_id": 251,
+    "magna_name": "המ-לט (ישראל קנדה) בע\"מ"
+  },
+  {
+    "name": "פורמולה מערכות",
+    "symbol": "פרמלה",
+    "tase_number": "256016",
+    "isin": "IL0002560162",
+    "weight": "0.30117",
+    "market_cap": "5,854",
+    "magna_id": 561,
+    "magna_name": "פורמולה מערכות (1985) בע\"מ"
+  },
+  {
+    "name": "אשטרום קבוצה",
+    "symbol": "אשקב",
+    "tase_number": "1132315",
+    "isin": "IL0011323156",
+    "weight": "0.28799",
+    "market_cap": "8,071",
+    "magna_id": 2183,
+    "magna_name": "קבוצת אשטרום בע\"מ"
+  },
+  {
+    "name": "חילן",
+    "symbol": "חילן",
+    "tase_number": "1084698",
+    "isin": "IL0010846983",
+    "weight": "0.27807",
+    "market_cap": "4,857",
+    "magna_id": 301,
+    "magna_name": "חילן בע\"מ"
+  },
+  {
+    "name": "רמי לוי",
+    "symbol": "רמלי",
+    "tase_number": "1104249",
+    "isin": "IL0011042491",
+    "weight": "0.27633",
+    "market_cap": "5,550",
+    "magna_id": 4205,
+    "magna_name": "רמי לוי השקמה נדל\"ן בע\"מ"
+  },
+  {
+    "name": "מקס סטוק",
+    "symbol": "מקסו",
+    "tase_number": "1168558",
+    "isin": "IL0011685588",
+    "weight": "0.27436",
+    "market_cap": "4,133",
+    "magna_id": 3424,
+    "magna_name": "מקס סטוק בע\"מ"
+  },
+  {
+    "name": "וואן טכנולוגיות",
+    "symbol": "וואן",
+    "tase_number": "161018",
+    "isin": "IL0001610182",
+    "weight": "0.25303",
+    "market_cap": "4,691",
+    "magna_id": 260,
+    "magna_name": "וואן טכנולוגיות תוכנה בע\"מ"
+  },
+  {
+    "name": "ישרוטל",
+    "symbol": "ישרטל",
+    "tase_number": "1080985",
+    "isin": "IL0010809858",
+    "weight": "0.25265",
+    "market_cap": "10,155",
+    "magna_id": 358,
+    "magna_name": "ישרוטל בע\"מ"
+  },
+  {
+    "name": "משק אנרגיה",
+    "symbol": "משקא",
+    "tase_number": "1166974",
+    "isin": "IL0011669749",
+    "weight": "0.24498",
+    "market_cap": "7,376",
+    "magna_id": 3430,
+    "magna_name": "משק אנרגיה- אנרגיות מתחדשות בע\"מ"
+  },
+  {
+    "name": "אקויטל",
+    "symbol": "אקטל",
+    "tase_number": "755017",
+    "isin": "IL0007550176",
+    "weight": "0.2227",
+    "market_cap": "5,591",
+    "magna_id": 117,
+    "magna_name": "אקויטל בע\"מ"
+  },
+  {
+    "name": "גב ים",
+    "symbol": "גבים",
+    "tase_number": "759019",
+    "isin": "IL0007590198",
+    "weight": "0.2152",
+    "market_cap": "9,263",
+    "magna_id": 287,
+    "magna_name": "חברת גב-ים לקרקעות בע\"מ"
+  },
+  {
+    "name": "נאייקס",
+    "symbol": "ניקס",
+    "tase_number": "1175116",
+    "isin": "IL0011751166",
+    "weight": "0.20923",
+    "market_cap": "6,304",
+    "magna_id": 3499,
+    "magna_name": "נאייקס בע\"מ"
+  },
+  {
+    "name": "מבטח שמיר",
+    "symbol": "מבשמ",
+    "tase_number": "127019",
+    "isin": "IL0001270193",
+    "weight": "0.19111",
+    "market_cap": "4,113",
+    "magna_id": 406,
+    "magna_name": "מבטח שמיר אחזקות בע\"מ"
+  },
+  {
+    "name": "פוקס",
+    "symbol": "פוקס",
+    "tase_number": "1087022",
+    "isin": "IL0010870223",
+    "weight": "0.19052",
+    "market_cap": "3,959",
+    "magna_id": 559,
+    "magna_name": "פוקס - ויזל בע\"מ"
+  },
+  {
+    "name": "סלע נדלן",
+    "symbol": "סלענד",
+    "tase_number": "1109644",
+    "isin": "IL0011096448",
+    "weight": "0.19015",
+    "market_cap": "2,387",
+    "magna_id": 3126,
+    "magna_name": "סלע בית השקעות (2016) בע\"מ"
+  },
+  {
+    "name": "בזן",
+    "symbol": "בזן",
+    "tase_number": "2590248",
+    "isin": "IL0025902482",
+    "weight": "0.1894",
+    "market_cap": "3,357",
+    "magna_id": 2208,
+    "magna_name": "בתי זקוק לנפט בע\"מ"
+  },
+  {
+    "name": "רבוע נדלן",
+    "symbol": "רבנד",
+    "tase_number": "1098565",
+    "isin": "IL0010985658",
+    "weight": "0.18371",
+    "market_cap": "5,271",
+    "magna_id": 2187,
+    "magna_name": "רבוע כחול נדל\"ן בע\"מ"
+  },
+  {
+    "name": "פריורטק",
+    "symbol": "פרטק",
+    "tase_number": "328013",
+    "isin": "IL0003280133",
+    "weight": "0.17857",
+    "market_cap": "3,031",
+    "magna_id": 581,
+    "magna_name": "פריורטק בע\"מ"
+  },
+  {
+    "name": "איידיאיי ביטוח",
+    "symbol": "אדבט",
+    "tase_number": "1129501",
+    "isin": "IL0011295016",
+    "weight": "0.17807",
+    "market_cap": "3,637",
+    "magna_id": 2698,
+    "magna_name": "איי.די.איי. חברה לביטוח בע\"מ"
+  },
+  {
+    "name": "אינרום",
+    "symbol": "אנרם",
+    "tase_number": "1132356",
+    "isin": "IL0011323560",
+    "weight": "0.17662",
+    "market_cap": "3,086",
+    "magna_id": 2919,
+    "magna_name": "אינרום תעשיות בנייה בע\"מ"
+  },
+  {
+    "name": "דנאל",
+    "symbol": "דנאל",
+    "tase_number": "314013",
+    "isin": "IL0003140139",
+    "weight": "0.17434",
+    "market_cap": "2,695",
+    "magna_id": 231,
+    "magna_name": "דנאל (אדיר יהושע) בע\"מ"
+  },
+  {
+    "name": "דניה סיבוס",
+    "symbol": "דניה",
+    "tase_number": "1173137",
+    "isin": "IL0011731374",
+    "weight": "0.17283",
+    "market_cap": "5,786",
+    "magna_id": 233,
+    "magna_name": "דניה סיבוס בע\"מ"
+  },
+  {
+    "name": "סאמיט",
+    "symbol": "סמט",
+    "tase_number": "1081686",
+    "isin": "IL0010816861",
+    "weight": "0.16941",
+    "market_cap": "4,537",
+    "magna_id": 300,
+    "magna_name": "סאמיט אחזקות נדל\"ן בע\"מ"
+  },
+  {
+    "name": "נטו מלינדה",
+    "symbol": "נטמל",
+    "tase_number": "1105097",
+    "isin": "IL0011050973",
+    "weight": "0.16709",
+    "market_cap": "3,872",
+    "magna_id": 2344,
+    "magna_name": "נטו מלינדה סחר בע\"מ"
+  },
+  {
+    "name": "ארגו פרופרטיז",
+    "symbol": "ארגו",
+    "tase_number": "1175371",
+    "isin": "NL0015000D84",
+    "weight": "0.16433",
+    "market_cap": "2,932",
+    "magna_id": 3427,
+    "magna_name": "ארגו פרופרטיס אן.וי."
+  },
+  {
+    "name": "מור השקעות",
+    "symbol": "מרהש",
+    "tase_number": "1141464",
+    "isin": "IL0011414641",
+    "weight": "0.16278",
+    "market_cap": "3,269",
+    "magna_id": 2928,
+    "magna_name": "י.ד. מור השקעות בע\"מ"
+  },
+  {
+    "name": "אלקטרה נדלן",
+    "symbol": "אלקנד",
+    "tase_number": "1094044",
+    "isin": "IL0010940448",
+    "weight": "0.16152",
+    "market_cap": "3,972",
+    "magna_id": 1569,
+    "magna_name": "אלקטרה נדל\"ן בע\"מ"
+  },
+  {
+    "name": "אפריקה מגורים",
+    "symbol": "אפמג",
+    "tase_number": "1097948",
+    "isin": "IL0010979487",
+    "weight": "0.1602",
+    "market_cap": "3,940",
+    "magna_id": 2166,
+    "magna_name": "אפריקה ישראל מגורים בע\"מ"
+  },
+  {
+    "name": "דלתא גליל",
+    "symbol": "דלתג",
+    "tase_number": "627034",
+    "isin": "IL0006270347",
+    "weight": "0.14529",
+    "market_cap": "4,275",
+    "magna_id": 2563,
+    "magna_name": "דלתא גליל תעשיות בע\"מ"
+  },
+  {
+    "name": "אזורים",
+    "symbol": "אזרם",
+    "tase_number": "715011",
+    "isin": "IL0007150118",
+    "weight": "0.14421",
+    "market_cap": "5,112",
+    "magna_id": 43,
+    "magna_name": "אזורים חברה להשקעות בפתוח ובבנין בע\"מ"
+  },
+  {
+    "name": "מג'יק",
+    "symbol": "מגיק",
+    "tase_number": "1082312",
+    "isin": "IL0010823123",
+    "weight": "0.12513",
+    "market_cap": "2,845",
+    "magna_id": 411,
+    "magna_name": "מג'יק תעשיות תוכנה בע\"מ"
+  },
+  {
+    "name": "קרסו מוטורס",
+    "symbol": "קרסמ",
+    "tase_number": "1123850",
+    "isin": "IL0011238503",
+    "weight": "0.12103",
+    "market_cap": "3,558",
+    "magna_id": 2770,
+    "magna_name": "קרסו מוטורס בע\"מ"
+  },
+  {
+    "name": "לפידות קפיטל",
+    "symbol": "לפדת",
+    "tase_number": "642017",
+    "isin": "IL0006420173",
+    "weight": "0.11788",
+    "market_cap": "5,571",
+    "magna_id": 400,
+    "magna_name": "לפידות קפיטל בע\"מ"
+  },
+  {
+    "name": "איביאי בית השק",
+    "symbol": "אבא",
+    "tase_number": "175018",
+    "isin": "IL0001750186",
+    "weight": "0.11693",
+    "market_cap": "5,449",
+    "magna_id": 189,
+    "magna_name": "אי.בי.אי. בית השקעות בע\"מ"
+  },
+  {
+    "name": "פרשקובסקי",
+    "symbol": "פרשק",
+    "tase_number": "1102128",
+    "isin": "IL0011021289",
+    "weight": "0.11685",
+    "market_cap": "3,915",
+    "magna_id": 3741,
+    "magna_name": "אריה פרשקובסקי גרופ בע\"מ"
+  },
+  {
+    "name": "יוחננוף",
+    "symbol": "יחנפ",
+    "tase_number": "1161264",
+    "isin": "IL0011612640",
+    "weight": "0.10811",
+    "market_cap": "5,429",
+    "magna_id": 3384,
+    "magna_name": "מ. יוחננוף ובניו (1988) בע\"מ"
+  },
+  {
+    "name": "אלקו",
+    "symbol": "אלקו",
+    "tase_number": "694034",
+    "isin": "IL0006940345",
+    "weight": "0.10089",
+    "market_cap": "4,381",
+    "magna_id": 82,
+    "magna_name": "אלקו בע\"מ"
+  },
+  {
+    "name": "ישרס",
+    "symbol": "ישרס",
+    "tase_number": "613034",
+    "isin": "IL0006130343",
+    "weight": "0.0925",
+    "market_cap": "4,645",
+    "magna_id": 359,
+    "magna_name": "ישרס - חברה להשקעות בע\"מ"
+  },
+  {
+    "name": "אקרו",
+    "symbol": "אקרו",
+    "tase_number": "1184902",
+    "isin": "IL0011849028",
+    "weight": "0.0917",
+    "market_cap": "3,203",
+    "magna_id": 3281,
+    "magna_name": "קבוצת אקרו בע\"מ"
+  },
+  {
+    "name": "רימון",
+    "symbol": "רמון",
+    "tase_number": "1178722",
+    "isin": "IL0011787228",
+    "weight": "0.08746",
+    "market_cap": "4,684",
+    "magna_id": 3072,
+    "magna_name": "רימון ז.צ. אדוויזורס בע\"מ"
+  },
+  {
+    "name": "עמרם",
+    "symbol": "עמרם",
+    "tase_number": "1188200",
+    "isin": "IL0011882003",
+    "weight": "0.08381",
+    "market_cap": "3,961",
+    "magna_id": 3589,
+    "magna_name": "עמרם אברהם חברה לבנין בע\"מ"
+  },
+  {
+    "name": "תמר פטרוליום",
+    "symbol": "תמרפ",
+    "tase_number": "1141357",
+    "isin": "IL0011413577",
+    "weight": "0.08361",
+    "market_cap": "3,053",
+    "magna_id": 3170,
+    "magna_name": "תמר פטרוליום בע\"מ"
+  },
+  {
+    "name": "דלק רכב",
+    "symbol": "דלקרכ",
+    "tase_number": "829010",
+    "isin": "IL0008290103",
+    "weight": "0.08272",
+    "market_cap": "1,994",
+    "magna_id": 226,
+    "magna_name": "דלק מערכות רכב בע\"מ"
+  },
+  {
+    "name": "אלקטרה צריכה",
+    "symbol": "אמצ",
+    "tase_number": "5010129",
+    "isin": "IL0050101299",
+    "weight": "0.07518",
+    "market_cap": "2,196",
+    "magna_id": 85,
+    "magna_name": "אלקטרה מוצרי צריכה (1970) בע\"מ"
+  },
+  {
+    "name": "ג'י סיטי",
+    "symbol": "גיסי",
+    "tase_number": "126011",
+    "isin": "IL0001260111",
+    "weight": "0.07492",
+    "market_cap": "1,456",
+    "magna_id": 188,
+    "magna_name": "ג'י סיטי בע\"מ"
+  },
+  {
+    "name": "ורידיס",
+    "symbol": "ורדס",
+    "tase_number": "1176387",
+    "isin": "IL0011763872",
+    "weight": "0.0695",
+    "market_cap": "4,963",
+    "magna_id": 3596,
+    "magna_name": "ורידיס אינווירונמנט בע\"מ"
+  },
+  {
+    "name": "ישרס אחזקות",
+    "symbol": "ישאח",
+    "tase_number": "1202977",
+    "isin": "IL0012029778",
+    "weight": "0.06593",
+    "market_cap": "2,568",
+    "magna_id": 3876,
+    "magna_name": "ישרס אחזקות בע\"מ"
+  },
+  {
+    "name": "ריטיילורס",
+    "symbol": "רטלס",
+    "tase_number": "1175488",
+    "isin": "IL0011754889",
+    "weight": "0.06416",
+    "market_cap": "1,886",
+    "magna_id": 3582,
+    "magna_name": "ריטיילורס בע\"מ"
+  },
+  {
+    "name": "נכסים ובנין",
+    "symbol": "נכסבנ",
+    "tase_number": "699017",
+    "isin": "IL0006990175",
+    "weight": "0.06007",
+    "market_cap": "3,217",
+    "magna_id": 285,
+    "magna_name": "חברה לנכסים ולבנין בע\"מ"
+  },
+  {
+    "name": "דוניץ",
+    "symbol": "דונץ",
+    "tase_number": "400010",
+    "isin": "IL0004000100",
+    "weight": "0.05938",
+    "market_cap": "2,494",
+    "magna_id": 45,
+    "magna_name": "אחים דוניץ בע\"מ"
+  },
+  {
+    "name": "אופקו הלת'",
+    "symbol": "אפקו",
+    "tase_number": "1129543",
+    "isin": "US68375N1037",
+    "weight": "0.051",
+    "market_cap": "2,483",
+    "magna_id": 2893,
+    "magna_name": "אופקו הלת', אינק"
+  },
+  {
+    "name": "קבוצת אקרשטיין",
+    "symbol": "אקרש",
+    "tase_number": "1176205",
+    "isin": "IL0011762056",
+    "weight": "0.04374",
+    "market_cap": "2,840",
+    "magna_id": 3610,
+    "magna_name": "קבוצת אקרשטיין בע\"מ"
+  },
+  {
+    "name": "שוב אנרגיה",
+    "symbol": "שובא",
+    "tase_number": "1188242",
+    "isin": "IL0011882425",
+    "weight": "0.04095",
+    "market_cap": "3,232",
+    "magna_id": 3635,
+    "magna_name": "שיכון ובינוי אנרגיה בע\"מ"
+  },
+  {
+    "name": "קרסו נדלן",
+    "symbol": "קרסנ",
+    "tase_number": "1187962",
+    "isin": "IL0011879629",
+    "weight": "0.03993",
+    "market_cap": "2,377",
+    "magna_id": 3792,
+    "magna_name": "קרסו נדל\"ן בע\"מ"
+  },
+  {
+    "name": "וילאר",
+    "symbol": "ולאר",
+    "tase_number": "416016",
+    "isin": "IL0004160169",
+    "weight": "0.03907",
+    "market_cap": "3,349",
+    "magna_id": 266,
+    "magna_name": "וילאר אינטרנשיונל בע\"מ"
+  },
+  {
+    "name": "מספנות ישראל",
+    "symbol": "מספנ",
+    "tase_number": "1168533",
+    "isin": "IL0011685331",
+    "weight": "0.03643",
+    "market_cap": "3,903",
+    "magna_id": 3420,
+    "magna_name": "תעשיות מספנות ישראל בע\"מ"
+  },
+  {
+    "name": "פלרם",
+    "symbol": "פלרם",
+    "tase_number": "644013",
+    "isin": "IL0006440130",
+    "weight": "0.03046",
+    "market_cap": "1,398",
+    "magna_id": 573,
+    "magna_name": "פלרם תעשיות (1990) בע\"מ"
+  },
+  {
+    "name": "ארפורט סיטי",
+    "symbol": "ארפט",
+    "tase_number": "1095835",
+    "isin": "IL0010958358",
+    "weight": "0.27123",
+    "market_cap": "6,652",
+    "magna_id": 1557,
+    "magna_name": "איירפורט סיטי בע\"מ"
+  }
+]
