@@ -12,3 +12,5 @@ data/magna_v2.db-wal
 tmp/
 data/qdrant/
 
+data/by_company/
+
