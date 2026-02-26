@@ -235,12 +235,20 @@ class Database:
             sql += f" LIMIT {limit}"
         return [dict(r) for r in self.conn.execute(sql, params).fetchall()]
 
-    def set_form_fields(self, report_id: int, form_fields: str, form_category: str):
-        self.conn.execute(
-            """UPDATE reports SET form_fields = ?, form_category = ?,
-               parsed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?""",
-            (form_fields, form_category, report_id),
-        )
+    def set_form_fields(self, report_id: int, form_fields: str, form_category: str,
+                        form_type_code: str | None = None):
+        if form_type_code:
+            self.conn.execute(
+                """UPDATE reports SET form_fields = ?, form_category = ?, form_type = ?,
+                   parsed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?""",
+                (form_fields, form_category, form_type_code, report_id),
+            )
+        else:
+            self.conn.execute(
+                """UPDATE reports SET form_fields = ?, form_category = ?,
+                   parsed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?""",
+                (form_fields, form_category, report_id),
+            )
         self.conn.commit()
 
     def set_report_indexed(self, report_id: int):

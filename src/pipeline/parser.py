@@ -203,9 +203,12 @@ def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb
 
         try:
             result = parse_form_html(report["form_html"])
-            category = get_category(report["form_type"] or "")
+            # Extract form type code from MisparTofes (e.g. "ת121", "ת053")
+            fields_dict = result.get("fields", {})
+            form_type_code = (fields_dict.get("MisparTofes") or "").strip() or None
+            category = get_category(form_type_code or report["form_type"] or "")
             form_fields_json = json.dumps(result, ensure_ascii=False)
-            db.set_form_fields(report["id"], form_fields_json, category)
+            db.set_form_fields(report["id"], form_fields_json, category, form_type_code)
             parsed += 1
 
             if parsed % 100 == 0 or parsed == total:
