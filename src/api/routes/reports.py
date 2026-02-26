@@ -64,7 +64,22 @@ def list_attachments(
 @router.get("/stats")
 def get_stats():
     db = get_db()
-    return db.stats()
+    result = db.stats()
+
+    # Add live Qdrant point count so admin can detect drift
+    try:
+        from qdrant_client import QdrantClient
+        from config import QDRANT_URL, QDRANT_COLLECTION
+        client = QdrantClient(url=QDRANT_URL)
+        info = client.get_collection(QDRANT_COLLECTION)
+        result["qdrant"] = {
+            "points_count": info.points_count,
+            "status": info.status.value if info.status else "unknown",
+        }
+    except Exception:
+        result["qdrant"] = {"points_count": None, "status": "unavailable"}
+
+    return result
 
 
 @router.get("/form-types")

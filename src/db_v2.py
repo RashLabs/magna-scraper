@@ -504,7 +504,8 @@ class Database:
 
     def form_type_counts(self) -> list[dict]:
         cur = self.conn.execute(
-            """SELECT form_type, COUNT(*) as cnt FROM reports
-               WHERE form_type IS NOT NULL GROUP BY form_type ORDER BY cnt DESC"""
+            """SELECT form_type, form_name, COUNT(*) as cnt FROM reports
+               WHERE form_type IS NOT NULL AND form_type != ''
+               GROUP BY form_type ORDER BY cnt DESC"""
         )
         return [dict(r) for r in cur.fetchall()]
