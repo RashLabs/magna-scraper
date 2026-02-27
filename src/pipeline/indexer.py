@@ -65,7 +65,7 @@ def _ensure_collection():
         client.create_payload_index(
             collection_name=QDRANT_COLLECTION,
             field_name="report_date",
-            field_schema=PayloadSchemaType.KEYWORD,
+            field_schema=PayloadSchemaType.INTEGER,
         )
         log.info(f"Created Qdrant collection '{QDRANT_COLLECTION}'")
     else:
@@ -171,9 +171,13 @@ def _index_report(db: Database, report: dict) -> int:
             pass
 
     config = get_config(report.get("form_type") or "")
+    # Convert report_date "YYYY-MM-DD" → integer YYYYMMDD for Qdrant Range queries
+    raw_date = report.get("report_date") or ""
+    date_int = int(raw_date.replace("-", "")) if raw_date else 0
+
     base_payload = {
         "reference_number": ref,
-        "report_date": report.get("report_date") or "",
+        "report_date": date_int,
         "company_id": report.get("company_id") or "",
         "company_name": report.get("company_name") or "",
         "form_type": report.get("form_type") or "",

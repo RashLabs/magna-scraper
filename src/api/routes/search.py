@@ -36,12 +36,13 @@ def _build_filter(req: SearchRequest):
             FieldCondition(key="company_name", match=MatchValue(value=req.company))
         )
     if req.date_from:
+        # report_date stored as integer YYYYMMDD
         must_conditions.append(
-            FieldCondition(key="report_date", range=Range(gte=req.date_from))
+            FieldCondition(key="report_date", range=Range(gte=float(int(req.date_from.replace("-", "")))))
         )
     if req.date_to:
         must_conditions.append(
-            FieldCondition(key="report_date", range=Range(lte=req.date_to))
+            FieldCondition(key="report_date", range=Range(lte=float(int(req.date_to.replace("-", "")))))
         )
 
     return Filter(must=must_conditions) if must_conditions else None
