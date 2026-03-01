@@ -229,7 +229,8 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_parse(self, limit: int = 0, reprocess: bool = False, since: str = "") -> list[dict]:
+    def get_reports_needing_parse(self, limit: int = 0, reprocess: bool = False, since: str = "",
+                                   company_ids: list[str] | None = None) -> list[dict]:
         """Reports with form_html but not yet parsed (or all with form_html if reprocess)."""
         if reprocess:
             sql = """SELECT id, reference_number, form_type, form_html FROM reports
@@ -241,6 +242,10 @@ class Database:
         if since:
             sql += " AND report_date >= ?"
             params.append(since)
+        if company_ids:
+            placeholders = ", ".join("?" for _ in company_ids)
+            sql += f" AND company_id IN ({placeholders})"
+            params.extend(company_ids)
         sql += " ORDER BY id"
         if limit:
             sql += f" LIMIT {limit}"
@@ -273,7 +278,8 @@ class Database:
         )
         self.conn.commit()
 
-    def get_reports_needing_index(self, limit: int = 0, reprocess: bool = False, since: str = "") -> list[dict]:
+    def get_reports_needing_index(self, limit: int = 0, reprocess: bool = False, since: str = "",
+                                   company_ids: list[str] | None = None) -> list[dict]:
         """Reports that need (re)indexing: parsed but never indexed,
         OR already indexed but have attachments extracted since last index.
         When reprocess=True, returns all parsed reports."""
@@ -298,6 +304,10 @@ class Database:
         if since:
             sql += " AND r.report_date >= ?"
             params.append(since)
+        if company_ids:
+            placeholders = ", ".join("?" for _ in company_ids)
+            sql += f" AND r.company_id IN ({placeholders})"
+            params.extend(company_ids)
         sql += " ORDER BY r.id"
         if limit:
             sql += f" LIMIT {limit}"
@@ -339,7 +349,8 @@ class Database:
         )
         self.conn.commit()
 
-    def get_pending_attachments(self, reprocess: bool = False, since: str = "") -> list[dict]:
+    def get_pending_attachments(self, reprocess: bool = False, since: str = "",
+                                company_ids: list[str] | None = None) -> list[dict]:
         params = []
         if reprocess:
             sql = """SELECT a.*, r.company_name, r.form_type FROM attachments a
@@ -352,6 +363,10 @@ class Database:
         if since:
             sql += " AND r.report_date >= ?"
             params.append(since)
+        if company_ids:
+            placeholders = ", ".join("?" for _ in company_ids)
+            sql += f" AND r.company_id IN ({placeholders})"
+            params.extend(company_ids)
         sql += " ORDER BY a.id"
         cur = self.conn.execute(sql, params)
         return [dict(r) for r in cur.fetchall()]
@@ -371,7 +386,8 @@ class Database:
         )
         self.conn.commit()
 
-    def get_downloaded_unextracted(self, reprocess: bool = False, since: str = "") -> list[dict]:
+    def get_downloaded_unextracted(self, reprocess: bool = False, since: str = "",
+                                    company_ids: list[str] | None = None) -> list[dict]:
         """Attachments downloaded but text not yet extracted (or all downloaded if reprocess)."""
         params = []
         if reprocess:
@@ -385,6 +401,10 @@ class Database:
         if since:
             sql += " AND r.report_date >= ?"
             params.append(since)
+        if company_ids:
+            placeholders = ", ".join("?" for _ in company_ids)
+            sql += f" AND r.company_id IN ({placeholders})"
+            params.extend(company_ids)
         sql += " ORDER BY a.id"
         cur = self.conn.execute(sql, params)
         return [dict(r) for r in cur.fetchall()]

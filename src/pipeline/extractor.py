@@ -1,17 +1,42 @@
-"""Stage 4: Extract text from downloaded PDF/TXT attachments."""
+"""Stage 4: Extract text from downloaded PDF/TXT attachments via Libre2."""
 
 import json
 import logging
 import sys
 from pathlib import Path
 
-import meowpdf
+import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from db_v2 import Database
-from config import PROJECT_ROOT
+from config import PROJECT_ROOT, LIBRE_URL
 
 log = logging.getLogger(__name__)
+
+
+def _extract_via_libre(path: Path) -> list[dict]:
+    """POST PDF to Libre2 /extract and map response to page dicts."""
+    with open(path, "rb") as f:
+        resp = httpx.post(
+            f"{LIBRE_URL}/extract",
+            files={"file": (path.name, f, "application/pdf")},
+            timeout=120.0,
+        )
+    resp.raise_for_status()
+    result = resp.json()
+
+    if not result.get("success"):
+        error = result.get("error", {})
+        raise RuntimeError(f"Libre extraction failed: {error.get('details', 'unknown error')}")
+
+    return [
+        {
+            "content": p["content"],
+            "word_count": p["word_count"],
+            "page_number": p["page"],
+        }
+        for p in result["pages"]
+    ]
 
 
 def extract_pages(local_path: str) -> list[dict]:
@@ -22,11 +47,7 @@ def extract_pages(local_path: str) -> list[dict]:
 
     suffix = path.suffix.lower()
     if suffix == ".pdf":
-        raw_pages = meowpdf.extract_text_pages(str(path))
-        return [
-            {"content": text, "word_count": len(text.split()), "page_number": i}
-            for i, text in enumerate(raw_pages, 1)
-        ]
+        return _extract_via_libre(path)
     elif suffix == ".txt":
         try:
             text = path.read_text(encoding="utf-8")
@@ -37,11 +58,12 @@ def extract_pages(local_path: str) -> list[dict]:
         raise ValueError(f"Unsupported file type: {suffix}")
 
 
-def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
+def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None = None,
+        cancel_check=None, progress_cb=None):
     """Extract text from all downloaded-but-not-extracted attachments.
     When reprocess=True, re-extract all downloaded attachments."""
     db = Database()
-    attachments = db.get_downloaded_unextracted(reprocess=reprocess, since=since)
+    attachments = db.get_downloaded_unextracted(reprocess=reprocess, since=since, company_ids=company_ids)
     total = len(attachments)
 
     if not attachments:
@@ -70,7 +92,6 @@ def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb
                 log.info(f"  Extracted {extracted}/{total}")
 
         except Exception as e:
-            # Do NOT mark as extracted — leave it retryable on next run
             errors += 1
             log.warning(f"  Failed: {att['filename']}: {e}")
 
@@ -82,6 +103,13 @@ def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb
 
 
 if __name__ == "__main__":
+    import argparse
+
     logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s %(message)s",
                         handlers=[logging.StreamHandler(sys.stdout)])
-    run()
+    parser = argparse.ArgumentParser(description="Stage 4: Extract text from attachments")
+    parser.add_argument("--reprocess", action="store_true", help="Re-extract all downloaded attachments")
+    parser.add_argument("--since", default="", help="Only process reports from this date (YYYY-MM-DD)")
+    parser.add_argument("--company-ids", nargs="+", default=None, help="Only process these company IDs")
+    args = parser.parse_args()
+    run(reprocess=args.reprocess, since=args.since, company_ids=args.company_ids)

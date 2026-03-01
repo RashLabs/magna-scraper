@@ -144,16 +144,17 @@ def start_stage(stage: str, req: PipelineStartRequest | None = None):
         }
     elif stage == "parse":
         from pipeline.parser import run
-        kwargs = {"reprocess": req.reprocess, "since": req.since}
+        kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids}
     elif stage == "download":
         from pipeline.downloader import run
-        kwargs = {"headless": req.headless, "reprocess": req.reprocess, "since": req.since}
+        kwargs = {"headless": req.headless, "reprocess": req.reprocess, "since": req.since,
+                  "company_ids": req.company_ids}
     elif stage == "extract":
         from pipeline.extractor import run
-        kwargs = {"reprocess": req.reprocess, "since": req.since}
+        kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids}
     elif stage == "index":
         from pipeline.indexer import run
-        kwargs = {"reprocess": req.reprocess, "since": req.since}
+        kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids}
     else:
         raise HTTPException(404)
 

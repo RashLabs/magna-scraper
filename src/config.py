@@ -30,6 +30,9 @@ DELAY_BETWEEN_COMPANIES = 1
 DELAY_BETWEEN_DOWNLOADS = 0.3
 MAX_RETRIES = 1
 
+# Libre2 (PDF extraction service)
+LIBRE_URL = os.environ.get("LIBRE_URL", "http://127.0.0.1:8008")
+
 # Qdrant
 QDRANT_URL = os.environ.get("QDRANT_URL", "http://127.0.0.1:6333")
 QDRANT_COLLECTION = "magna"

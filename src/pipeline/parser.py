@@ -180,11 +180,12 @@ def parse_form_html(html: str) -> dict:
     }
 
 
-def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
+def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None = None,
+        cancel_check=None, progress_cb=None):
     """Parse all reports that have HTML but haven't been parsed yet.
     When reprocess=True, re-parse all reports with HTML."""
     db = Database()
-    reports = db.get_reports_needing_parse(reprocess=reprocess, since=since)
+    reports = db.get_reports_needing_parse(reprocess=reprocess, since=since, company_ids=company_ids)
     total = len(reports)
 
     if not reports:

@@ -294,7 +294,8 @@ def _flush_to_qdrant(pending_reports: list[dict]):
 _FLUSH_THRESHOLD = 200
 
 
-def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb=None):
+def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None = None,
+        cancel_check=None, progress_cb=None):
     """Index all reports that are parsed but not yet indexed.
     When reprocess=True, re-index all parsed reports.
 
@@ -303,7 +304,7 @@ def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb
     """
     db = Database()
     log.info(f"Querying reports to index (reprocess={reprocess}, since={since or 'all'})...")
-    reports = db.get_reports_needing_index(reprocess=reprocess, since=since)
+    reports = db.get_reports_needing_index(reprocess=reprocess, since=since, company_ids=company_ids)
     total = len(reports)
 
     if not reports:
