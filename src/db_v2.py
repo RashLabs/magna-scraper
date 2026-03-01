@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS attachments (
     downloaded_at       TEXT,
     extracted_at        TEXT,
     indexed_at          TEXT,
+    page_count          INTEGER DEFAULT 0,
 
     created_at          TEXT DEFAULT (datetime('now')),
     UNIQUE(reference_number, filename)
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS scrape_watermarks (
 CREATE INDEX IF NOT EXISTS idx_reports_date ON reports(report_date);
 CREATE INDEX IF NOT EXISTS idx_reports_company ON reports(company_id);
 CREATE INDEX IF NOT EXISTS idx_reports_form_type ON reports(form_type);
+CREATE INDEX IF NOT EXISTS idx_att_report_id ON attachments(report_id);
 CREATE INDEX IF NOT EXISTS idx_att_ref ON attachments(reference_number);
 CREATE INDEX IF NOT EXISTS idx_att_status ON attachments(download_status);
 """
@@ -84,6 +86,15 @@ class Database:
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.execute("PRAGMA foreign_keys=ON")
         self.conn.executescript(SCHEMA)
+        self._migrate()
+
+    def _migrate(self):
+        """Add columns that may be missing in older databases."""
+        cols = {row[1] for row in self.conn.execute("PRAGMA table_info(attachments)").fetchall()}
+        if "page_count" not in cols:
+            self.conn.execute("ALTER TABLE attachments ADD COLUMN page_count INTEGER DEFAULT 0")
+            self.conn.commit()
+            log.info("Migration: added page_count column to attachments")
 
     def close(self):
         self.conn.close()
@@ -237,15 +248,19 @@ class Database:
 
     def set_form_fields(self, report_id: int, form_fields: str, form_category: str,
                         form_type_code: str | None = None):
+        # Clear form_html after parsing — it's only needed for field extraction
+        # and storing it bloats the DB (~100 KB per report, ~2 GB total).
         if form_type_code:
             self.conn.execute(
                 """UPDATE reports SET form_fields = ?, form_category = ?, form_type = ?,
+                   form_html = NULL,
                    parsed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?""",
                 (form_fields, form_category, form_type_code, report_id),
             )
         else:
             self.conn.execute(
                 """UPDATE reports SET form_fields = ?, form_category = ?,
+                   form_html = NULL,
                    parsed_at = datetime('now'), updated_at = datetime('now') WHERE id = ?""",
                 (form_fields, form_category, report_id),
             )
@@ -374,10 +389,10 @@ class Database:
         cur = self.conn.execute(sql, params)
         return [dict(r) for r in cur.fetchall()]
 
-    def set_attachment_extracted(self, att_id: int):
+    def set_attachment_extracted(self, att_id: int, page_count: int = 0):
         self.conn.execute(
-            "UPDATE attachments SET extracted_at = datetime('now') WHERE id = ?",
-            (att_id,),
+            "UPDATE attachments SET extracted_at = datetime('now'), page_count = ? WHERE id = ?",
+            (page_count, att_id),
         )
         self.conn.commit()
 

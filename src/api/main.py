@@ -18,6 +18,9 @@ logging.basicConfig(
     format="[%(asctime)s] %(levelname)s %(message)s",
     handlers=[logging.StreamHandler(sys.stderr)],
 )
+# Silence noisy HTTP client loggers (qdrant httpx, google-genai, etc.)
+for _name in ("httpx", "httpcore", "urllib3", "google", "qdrant_client", "uvicorn.access"):
+    logging.getLogger(_name).setLevel(logging.WARNING)
 
 app = FastAPI(
     title="Magna Scraper API",

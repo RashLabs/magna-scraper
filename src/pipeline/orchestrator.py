@@ -70,6 +70,7 @@ def _run_stage(stage: str, cancel_check, progress_cb,
 def run(since: str = "2024-01-01", headless: bool = True,
         company_list: str = "", company_ids: list[str] | None = None,
         rescrape: bool = False, reprocess: bool = False,
+        skip_html: bool = False,
         cancel_check=None, progress_cb=None,
         stages_detail: list | None = None):
     """Run all pipeline stages sequentially with retry on remaining items.
@@ -85,6 +86,7 @@ def run(since: str = "2024-01-01", headless: bool = True,
         "company_list": company_list,
         "company_ids": company_ids,
         "rescrape": rescrape,
+        "fetch_html": not skip_html,
     }
 
     total_stages = len(STAGE_DEFS)

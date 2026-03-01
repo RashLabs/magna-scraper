@@ -1,9 +1,9 @@
-"""Search endpoint — Qdrant semantic / lexical / hybrid search."""
+"""Search/fetch endpoints over MAGNA Qdrant data."""
 
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 import sys
 from pathlib import Path
@@ -19,10 +19,18 @@ class SearchRequest(BaseModel):
     company: str = ""
     date_from: str = ""
     date_to: str = ""
-    limit: int = 10
+    limit: int = Field(default=10, ge=1, le=100)
 
 
-def _build_filter(req: SearchRequest):
+class FetchRequest(BaseModel):
+    form_type: str = ""
+    company: str = ""
+    date_from: str = ""
+    date_to: str = ""
+    limit: int = Field(default=10, ge=1, le=100)
+
+
+def _build_filter(req: SearchRequest | FetchRequest):
     """Build Qdrant Filter from request metadata fields."""
     from qdrant_client.models import Filter, FieldCondition, MatchValue, Range
 
@@ -46,6 +54,23 @@ def _build_filter(req: SearchRequest):
         )
 
     return Filter(must=must_conditions) if must_conditions else None
+
+
+def _dedup_by_reference(records: list[Any], limit: int) -> list[dict]:
+    """Keep one payload per reference_number while preserving input order."""
+    deduped: list[dict] = []
+    seen_refs: set[str] = set()
+    for record in records:
+        payload = record.payload or {}
+        reference = str(payload.get("reference_number") or "").strip()
+        if reference:
+            if reference in seen_refs:
+                continue
+            seen_refs.add(reference)
+        deduped.append({"payload": payload})
+        if len(deduped) >= limit:
+            break
+    return deduped
 
 
 @router.post("/search")
@@ -106,6 +131,36 @@ def search(req: SearchRequest):
                 }
                 for point in results.points
             ]
+        }
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@router.post("/fetch")
+def fetch(req: FetchRequest):
+    """Fetch latest reports by report_date DESC (query-free listing)."""
+    try:
+        from config import QDRANT_URL, QDRANT_COLLECTION
+        from qdrant_client import QdrantClient, models
+
+        client = QdrantClient(url=QDRANT_URL)
+        query_filter = _build_filter(req)
+        # Overfetch to account for multi-chunk reports before dedup by reference.
+        overfetch_limit = max(req.limit * 3, req.limit)
+        records, _next_offset = client.scroll(
+            collection_name=QDRANT_COLLECTION,
+            scroll_filter=query_filter,
+            limit=overfetch_limit,
+            order_by=models.OrderBy(
+                key="report_date",
+                direction=models.Direction.DESC,
+            ),
+            with_payload=True,
+            with_vectors=False,
+        )
+
+        return {
+            "results": _dedup_by_reference(records, req.limit),
         }
     except Exception as e:
         raise HTTPException(500, str(e))

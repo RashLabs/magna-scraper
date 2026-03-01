@@ -208,7 +208,7 @@ def _process_reports(db: Database, pw_page: Page, reports: list, stats: dict,
                 if html:
                     db.set_form_html(report_id, html)
                     stats["html_fetched"] += 1
-                time.sleep(0.3)  # Be gentle
+                time.sleep(0.1)
 
 
 def _scrape_entity(pw_page: Page, db: Database, entity_id: str,
@@ -283,6 +283,9 @@ def _load_companies(company_list: str = "", company_ids: list[str] | None = None
 
     if company_ids:
         id_set = set(company_ids)
+        all_ids_in_file = {str(c["magna_id"]) for c in companies}
+        log.info(f"Requested IDs: {company_ids}")
+        log.info(f"First 10 IDs in file: {sorted(all_ids_in_file, key=int)[:10]}")
         companies = [c for c in companies if str(c["magna_id"]) in id_set]
         log.info(f"Filtered to {len(companies)} companies from {len(id_set)} requested IDs")
 
@@ -291,7 +294,7 @@ def _load_companies(company_list: str = "", company_ids: list[str] | None = None
 
 def run(since: str = DEFAULT_SINCE, headless: bool = True,
         company_list: str = "", company_ids: list[str] | None = None,
-        rescrape: bool = False,
+        rescrape: bool = False, fetch_html: bool = True,
         cancel_check=None, progress_cb=None):
     """Main scrape entry point.
 
@@ -300,6 +303,7 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
         company_ids: List of magna_id strings to scrape (filters the company list).
                      If empty/None, scrapes all companies in the list.
         rescrape: When True, ignore watermarks and scrape the full date range.
+        fetch_html: When False, skip per-report form HTML fetching (much faster).
     """
     to_date_iso = datetime.now().strftime("%Y-%m-%d")
     to_date = _to_magna_date(to_date_iso)
@@ -346,11 +350,16 @@ def run(since: str = DEFAULT_SINCE, headless: bool = True,
                 stats = _scrape_entity(
                     pw_page, db, entity_id, from_date, to_date,
                     company_id=entity_id, company_name=name,
+                    fetch_html=fetch_html,
                     cancel_check=cancel_check,
                 )
                 log.info(f"  => {stats['reports']} reports, {stats['attachments']} att, {stats['html_fetched']} html")
-                # Update watermark on successful scrape
-                db.set_watermark(entity_id, to_date_iso)
+                # Update watermark only when reports were actually stored —
+                # setting it on 0-result runs locks out future retries.
+                if stats["reports"] > 0:
+                    db.set_watermark(entity_id, to_date_iso)
+                else:
+                    log.info(f"  No reports stored for {name}, watermark not advanced")
             except Exception as e:
                 log.error(f"  ERROR: {e}")
 
@@ -375,7 +384,8 @@ if __name__ == "__main__":
     parser.add_argument("--company-list", metavar="JSON")
     parser.add_argument("--company-ids", nargs="+", metavar="ID", help="Magna entity IDs to scrape")
     parser.add_argument("--rescrape", action="store_true", help="Ignore watermarks, scrape full date range")
+    parser.add_argument("--skip-html", action="store_true", help="Skip form HTML fetching (much faster)")
     args = parser.parse_args()
     run(since=args.since, headless=args.headless,
         company_list=args.company_list or "", company_ids=args.company_ids,
-        rescrape=args.rescrape)
+        rescrape=args.rescrape, fetch_html=not args.skip_html)

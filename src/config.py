@@ -22,16 +22,16 @@ API_RESULTS_URL = "https://www.magna.isa.gov.il/api/results"
 DEFAULT_SINCE = "2024-01-01"
 
 # Browser
-SLOW_MO = 100
+SLOW_MO = 0  # was 100 — adds artificial delay to every Playwright action, 0 for headless
 TIMEOUT_MS = 60_000
 VIEWPORT = {"width": 1280, "height": 900}
-DELAY_BETWEEN_PAGES = 1
-DELAY_BETWEEN_COMPANIES = 2
-DELAY_BETWEEN_DOWNLOADS = 0.5
+DELAY_BETWEEN_PAGES = 0.5
+DELAY_BETWEEN_COMPANIES = 1
+DELAY_BETWEEN_DOWNLOADS = 0.3
 MAX_RETRIES = 1
 
 # Qdrant
-QDRANT_URL = os.environ.get("QDRANT_URL", "http://localhost:6333")
+QDRANT_URL = os.environ.get("QDRANT_URL", "http://127.0.0.1:6333")
 QDRANT_COLLECTION = "magna"
 EMBEDDING_MODEL = "gemini-embedding-001"
 EMBEDDING_DIMS = 1536

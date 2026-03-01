@@ -6,8 +6,9 @@
     "isin": "IL0006290147",
     "weight": "5.01653",
     "market_cap": "124,966",
-    "magna_id": 3615,
-    "magna_name": "הון הטבע בע\"מ"
+    "magna_id": 310,
+    "magna_name": "טבע תעשיות פרמצבטיות בע\"מ",
+    "english_name": "Teva"
   },
   {
     "name": "דיסקונט       א",
@@ -26,8 +27,9 @@
     "isin": "IL0010811243",
     "weight": "4.8776",
     "market_cap": "107,926",
-    "magna_id": 2718,
-    "magna_name": "אלביט מערכות אבטחה בע\"מ"
+    "magna_id": 72,
+    "magna_name": "אלביט מערכות בע\"מ",
+    "english_name": "Elbit Systems"
   },
   {
     "name": "פועלים",
@@ -46,8 +48,8 @@
     "isin": "IL0006046119",
     "weight": "4.63767",
     "market_cap": "112,929",
-    "magna_id": 12,
-    "magna_name": "אגיש הובלה בין לאומית בע\"מ"
+    "magna_id": 167,
+    "magna_name": "בנק לאומי לישראל בע\"מ"
   },
   {
     "name": "טאואר",
@@ -57,7 +59,8 @@
     "weight": "4.56912",
     "market_cap": "44,496",
     "magna_id": 309,
-    "magna_name": "טאואר סמיקונדקטור בע\"מ"
+    "magna_name": "טאואר סמיקונדקטור בע\"מ",
+    "english_name": "Tower Semiconductor"
   },
   {
     "name": "נובה",
@@ -66,8 +69,9 @@
     "isin": "IL0010845571",
     "weight": "4.37552",
     "market_cap": "42,185",
-    "magna_id": 1877,
-    "magna_name": "אנובה חתמויות בע\"מ"
+    "magna_id": 489,
+    "magna_name": "נובה בע\"מ",
+    "english_name": "Nova"
   },
   {
     "name": "הפניקס",
@@ -76,8 +80,8 @@
     "isin": "IL0007670123",
     "weight": "3.98239",
     "market_cap": "42,660",
-    "magna_id": 2639,
-    "magna_name": "הפניקס גיוסי הון (2009) בע\"מ"
+    "magna_id": 253,
+    "magna_name": "הפניקס פיננסים בע\"מ"
   },
   {
     "name": "מזרחי טפחות",
@@ -86,8 +90,8 @@
     "isin": "IL0006954379",
     "weight": "3.9024",
     "market_cap": "63,768",
-    "magna_id": 1728,
-    "magna_name": "אתגר חברה לניהול תיקי השקעות מקבוצת מזרחי טפחות בע\"מ"
+    "magna_id": 163,
+    "magna_name": "בנק מזרחי טפחות בע\"מ"
   },
   {
     "name": "אנלייט אנרגיה",
@@ -107,7 +111,8 @@
     "weight": "2.30872",
     "market_cap": "22,259",
     "magna_id": 498,
-    "magna_name": "נייס בע\"מ"
+    "magna_name": "נייס בע\"מ",
+    "english_name": "NICE"
   },
   {
     "name": "נקסט ויז'ן",
@@ -117,7 +122,8 @@
     "weight": "2.19954",
     "market_cap": "30,315",
     "magna_id": 3585,
-    "magna_name": "נקסט ויז'ן מערכות מיוצבות בע\"מ"
+    "magna_name": "נקסט ויז'ן מערכות מיוצבות בע\"מ",
+    "english_name": "NextVision"
   },
   {
     "name": "אורמת טכנו",
@@ -127,7 +133,8 @@
     "weight": "2.18218",
     "market_cap": "21,039",
     "magna_id": 2979,
-    "magna_name": "אורמת טכנולוגיות אינק."
+    "magna_name": "אורמת טכנולוגיות אינק.",
+    "english_name": "Ormat Technologies"
   },
   {
     "name": "בזק",
@@ -136,8 +143,9 @@
     "isin": "IL0002300114",
     "weight": "2.08595",
     "market_cap": "22,855",
-    "magna_id": 2726,
-    "magna_name": "בזק בינלאומי בע\"מ"
+    "magna_id": 144,
+    "magna_name": "בזק החברה הישראלית לתקשורת בע\"מ",
+    "english_name": "Bezeq"
   },
   {
     "name": "הראל השקעות",
@@ -186,8 +194,8 @@
     "isin": "IL0005930388",
     "weight": "1.54658",
     "market_cap": "28,674",
-    "magna_id": 62,
-    "magna_name": "אינדקס מדדים בינלאומיים בע\"מ"
+    "magna_id": 241,
+    "magna_name": "הבנק הבינלאומי הראשון לישראל בע\"מ"
   },
   {
     "name": "קמטק",
@@ -196,8 +204,9 @@
     "isin": "IL0010952641",
     "weight": "1.43044",
     "market_cap": "22,243",
-    "magna_id": 616,
-    "magna_name": "קמטק בע\"מ"
+    "magna_id": 2085,
+    "magna_name": "קמטק בע\"מ",
+    "english_name": "Camtek"
   },
   {
     "name": "נאוויטס פטר יהש",
@@ -206,8 +215,8 @@
     "isin": "IL0011419699",
     "weight": "1.40683",
     "market_cap": "15,434",
-    "magna_id": 3160,
-    "magna_name": "נאוויטס בקסקין מימון בע\"מ"
+    "magna_id": 3056,
+    "magna_name": "נאוויטס פטרוליום, שותפות מוגבלת"
   },
   {
     "name": "הבורסה לניע בתא",
@@ -226,8 +235,8 @@
     "isin": "IL0010972607",
     "weight": "1.31648",
     "market_cap": "19,542",
-    "magna_id": 3426,
-    "magna_name": "ביג - טק 50 מו\"פ - שותפות מוגבלת"
+    "magna_id": 2122,
+    "magna_name": "ביג מרכזי קניות בע\"מ"
   },
   {
     "name": "איי.סי.אל",
@@ -247,7 +256,8 @@
     "weight": "1.15549",
     "market_cap": "24,756",
     "magna_id": 228,
-    "magna_name": "ניו-מד אנרג'י - שותפות מוגבלת"
+    "magna_name": "ניו-מד אנרג'י - שותפות מוגבלת",
+    "english_name": "NewMed Energy"
   },
   {
     "name": "מגדל ביטוח",
@@ -287,7 +297,8 @@
     "weight": "0.96363",
     "market_cap": "18,581",
     "magna_id": 595,
-    "magna_name": "קבוצת דלק בע\"מ"
+    "magna_name": "קבוצת דלק בע\"מ",
+    "english_name": "Delek Group"
   },
   {
     "name": "שופרסל",
@@ -337,7 +348,8 @@
     "weight": "0.82904",
     "market_cap": "16,324",
     "magna_id": 546,
-    "magna_name": "שטראוס גרופ בע\"מ"
+    "magna_name": "שטראוס גרופ בע\"מ",
+    "english_name": "Strauss Group"
   },
   {
     "name": "שיכון ובינוי",
@@ -346,8 +358,8 @@
     "isin": "IL0010819428",
     "weight": "0.68321",
     "market_cap": "10,798",
-    "magna_id": 3635,
-    "magna_name": "שיכון ובינוי אנרגיה בע\"מ"
+    "magna_id": 670,
+    "magna_name": "שיכון ובינוי בע\"מ"
   },
   {
     "name": "בית שמש",
@@ -386,8 +398,9 @@
     "isin": "IL0010834849",
     "weight": "0.60339",
     "market_cap": "7,462",
-    "magna_id": 22,
-    "magna_name": "אומגה פרטנרס בע\"מ"
+    "magna_id": 293,
+    "magna_name": "חברת פרטנר תקשורת בע\"מ",
+    "english_name": "Partner"
   },
   {
     "name": "אמות",
@@ -407,7 +420,8 @@
     "weight": "0.57679",
     "market_cap": "6,951",
     "magna_id": 3295,
-    "magna_name": "אנרג'יאן פי אל סי"
+    "magna_name": "אנרג'יאן פי אל סי",
+    "english_name": "Energean"
   },
   {
     "name": "אל על",
@@ -417,7 +431,8 @@
     "weight": "0.56884",
     "market_cap": "9,820",
     "magna_id": 1483,
-    "magna_name": "אל על נתיבי אויר לישראל בע\"מ"
+    "magna_name": "אל על נתיבי אויר לישראל בע\"מ",
+    "english_name": "El Al"
   },
   {
     "name": "ריט 1",
@@ -526,8 +541,8 @@
     "isin": "IL0010903156",
     "weight": "0.37823",
     "market_cap": "10,131",
-    "magna_id": 2873,
-    "magna_name": "י.ח. דמרי אחזקות (2001) בע\"מ"
+    "magna_id": 1537,
+    "magna_name": "י.ח. דמרי בניה ופיתוח בע\"מ"
   },
   {
     "name": "חברה לישראל",
@@ -576,8 +591,9 @@
     "isin": "IL0010825102",
     "weight": "0.3524",
     "market_cap": "3,398",
-    "magna_id": 193,
-    "magna_name": "גילת טלקום גלובל בע\"מ"
+    "magna_id": 1528,
+    "magna_name": "גילת רשתות לווין בע\"מ",
+    "english_name": "Gilat Telecom"
   },
   {
     "name": "סלקום",
@@ -587,7 +603,8 @@
     "weight": "0.34079",
     "market_cap": "6,131",
     "magna_id": 2458,
-    "magna_name": "סלקום ישראל בע\"מ"
+    "magna_name": "סלקום ישראל בע\"מ",
+    "english_name": "Cellcom"
   },
   {
     "name": "מטריקס",
@@ -596,8 +613,8 @@
     "isin": "IL0004450156",
     "weight": "0.33713",
     "market_cap": "6,253",
-    "magna_id": 263,
-    "magna_name": "מולטימטריקס בע\"מ"
+    "magna_id": 426,
+    "magna_name": "מטריקס אי.טי. בע\"מ"
   },
   {
     "name": "רציו      יהש",
@@ -626,8 +643,8 @@
     "isin": "IL0004340191",
     "weight": "0.30629",
     "market_cap": "7,610",
-    "magna_id": 251,
-    "magna_name": "המ-לט (ישראל קנדה) בע\"מ"
+    "magna_id": 703,
+    "magna_name": "ישראל-קנדה (ט.ר) בע\"מ"
   },
   {
     "name": "פורמולה מערכות",
@@ -666,8 +683,8 @@
     "isin": "IL0011042491",
     "weight": "0.27633",
     "market_cap": "5,550",
-    "magna_id": 4205,
-    "magna_name": "רמי לוי השקמה נדל\"ן בע\"מ"
+    "magna_id": 2389,
+    "magna_name": "רשת חנויות רמי לוי שיווק השיקמה 2006 בע\"מ"
   },
   {
     "name": "מקס סטוק",
@@ -766,8 +783,8 @@
     "isin": "IL0011096448",
     "weight": "0.19015",
     "market_cap": "2,387",
-    "magna_id": 3126,
-    "magna_name": "סלע בית השקעות (2016) בע\"מ"
+    "magna_id": 2492,
+    "magna_name": "סלע קפיטל נדל\"ן בע\"מ"
   },
   {
     "name": "בזן",
@@ -906,7 +923,7 @@
     "isin": "IL0006270347",
     "weight": "0.14529",
     "market_cap": "4,275",
-    "magna_id": 2563,
+    "magna_id": 229,
     "magna_name": "דלתא גליל תעשיות בע\"מ"
   },
   {
@@ -966,8 +983,8 @@
     "isin": "IL0011021289",
     "weight": "0.11685",
     "market_cap": "3,915",
-    "magna_id": 3741,
-    "magna_name": "אריה פרשקובסקי גרופ בע\"מ"
+    "magna_id": 2155,
+    "magna_name": "פרשקובסקי השקעות ובניין בע\"מ"
   },
   {
     "name": "יוחננוף",
@@ -1016,8 +1033,8 @@
     "isin": "IL0011787228",
     "weight": "0.08746",
     "market_cap": "4,684",
-    "magna_id": 3072,
-    "magna_name": "רימון ז.צ. אדוויזורס בע\"מ"
+    "magna_id": 3627,
+    "magna_name": "רימון שירותי ייעוץ וניהול בע\"מ"
   },
   {
     "name": "עמרם",

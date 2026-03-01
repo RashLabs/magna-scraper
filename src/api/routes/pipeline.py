@@ -84,6 +84,7 @@ def start_run_all(req: PipelineStartRequest | None = None):
         "company_ids": req.company_ids,
         "rescrape": req.rescrape,
         "reprocess": req.reprocess,
+        "skip_html": req.skip_html,
     }
 
     if not start_job("run_all", run, kwargs):
@@ -139,6 +140,7 @@ def start_stage(stage: str, req: PipelineStartRequest | None = None):
             "company_list": company_list,
             "company_ids": req.company_ids,
             "rescrape": req.rescrape,
+            "fetch_html": not req.skip_html,
         }
     elif stage == "parse":
         from pipeline.parser import run

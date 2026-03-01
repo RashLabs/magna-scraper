@@ -63,7 +63,7 @@ def run(reprocess: bool = False, since: str = "", cancel_check=None, progress_cb
             doc_json = json.dumps({"pages": pages}, ensure_ascii=False)
             total_chars = sum(len(p["content"]) for p in pages)
             db.insert_doc_text(att["id"], doc_json, total_chars)
-            db.set_attachment_extracted(att["id"])
+            db.set_attachment_extracted(att["id"], page_count=len(pages))
             extracted += 1
 
             if extracted % 50 == 0 or extracted == total:

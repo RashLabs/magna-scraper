@@ -10,6 +10,7 @@ class PipelineStartRequest(BaseModel):
     company_ids: list[str] | None = None  # magna_ids to scrape (subset of ta125)
     rescrape: bool = False  # when True, ignore watermarks and scrape the full date range
     reprocess: bool = False  # when True, re-run parse/download/extract/index on already-processed items
+    skip_html: bool = False  # when True, skip per-report form HTML fetching (much faster scrape)
 
 
 class StageDetailResponse(BaseModel):
