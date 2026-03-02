@@ -22,7 +22,7 @@ def _extract_via_libre(path: Path) -> list[dict]:
         resp = httpx.post(
             f"{LIBRE_URL}/extract",
             files={"file": (path.name, f, "application/pdf")},
-            timeout=300.0,
+            timeout=1500.0,
         )
     resp.raise_for_status()
     result = resp.json()
