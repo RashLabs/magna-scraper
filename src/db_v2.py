@@ -109,6 +109,13 @@ class Database:
             self.conn.execute("ALTER TABLE attachments ADD COLUMN page_count INTEGER DEFAULT 0")
             self.conn.commit()
             log.info("Migration: added page_count column to attachments")
+        if "extract_status" not in cols:
+            self.conn.execute("ALTER TABLE attachments ADD COLUMN extract_status TEXT")
+            self.conn.execute("ALTER TABLE attachments ADD COLUMN extract_error TEXT")
+            # Backfill: mark already-extracted attachments as 'ok'
+            self.conn.execute("UPDATE attachments SET extract_status = 'ok' WHERE extracted_at IS NOT NULL")
+            self.conn.commit()
+            log.info("Migration: added extract_status, extract_error columns to attachments")
 
         # Auto-seed companies from ta125_magna.json if table is empty
         if self.company_count() == 0:
@@ -405,8 +412,14 @@ class Database:
         self.conn.commit()
 
     def get_downloaded_unextracted(self, reprocess: bool = False, since: str = "",
-                                    company_ids: list[str] | None = None) -> list[dict]:
-        """Attachments downloaded but text not yet extracted (or all downloaded if reprocess)."""
+                                    company_ids: list[str] | None = None,
+                                    retry_errors: bool = False) -> list[dict]:
+        """Attachments downloaded but text not yet extracted (or all downloaded if reprocess).
+
+        By default, skips attachments whose extract_status='failed' so that
+        known-bad files (e.g. Azure-OCR timeouts) are not retried every run.
+        Pass retry_errors=True to include them.
+        """
         params = []
         if reprocess:
             sql = """SELECT a.* FROM attachments a
@@ -416,6 +429,8 @@ class Database:
             sql = """SELECT a.* FROM attachments a
                      JOIN reports r ON r.id = a.report_id
                      WHERE a.download_status = 'downloaded' AND a.extracted_at IS NULL"""
+            if not retry_errors:
+                sql += " AND (a.extract_status IS NULL OR a.extract_status != 'failed')"
         if since:
             sql += " AND r.report_date >= ?"
             params.append(since)
@@ -429,8 +444,16 @@ class Database:
 
     def set_attachment_extracted(self, att_id: int, page_count: int = 0):
         self.conn.execute(
-            "UPDATE attachments SET extracted_at = datetime('now'), page_count = ? WHERE id = ?",
+            """UPDATE attachments SET extracted_at = datetime('now'), page_count = ?,
+               extract_status = 'ok', extract_error = NULL WHERE id = ?""",
             (page_count, att_id),
+        )
+        self.conn.commit()
+
+    def set_extract_failed(self, att_id: int, error: str):
+        self.conn.execute(
+            """UPDATE attachments SET extract_status = 'failed', extract_error = ? WHERE id = ?""",
+            (error, att_id),
         )
         self.conn.commit()
 
@@ -526,8 +549,9 @@ class Database:
             "attachments": {
                 "total": r("SELECT COUNT(*) FROM attachments").fetchone()[0],
                 "downloaded": r("SELECT COUNT(*) FROM attachments WHERE download_status = 'downloaded'").fetchone()[0],
-                "failed": r("SELECT COUNT(*) FROM attachments WHERE download_status = 'failed'").fetchone()[0],
+                "download_failed": r("SELECT COUNT(*) FROM attachments WHERE download_status = 'failed'").fetchone()[0],
                 "extracted": r("SELECT COUNT(*) FROM attachments WHERE extracted_at IS NOT NULL").fetchone()[0],
+                "extract_failed": r("SELECT COUNT(*) FROM attachments WHERE extract_status = 'failed'").fetchone()[0],
                 "indexed": r("SELECT COUNT(*) FROM attachments WHERE indexed_at IS NOT NULL").fetchone()[0],
             },
         }

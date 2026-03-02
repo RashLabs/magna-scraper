@@ -11,6 +11,7 @@ class PipelineStartRequest(BaseModel):
     rescrape: bool = False  # when True, ignore watermarks and scrape the full date range
     reprocess: bool = False  # when True, re-run parse/download/extract/index on already-processed items
     skip_html: bool = False  # when True, skip per-report form HTML fetching (much faster scrape)
+    retry_errors: bool = False  # when True, also retry previously-failed extractions
 
 
 class StageDetailResponse(BaseModel):

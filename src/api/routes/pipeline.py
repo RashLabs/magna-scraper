@@ -169,7 +169,8 @@ def start_stage(stage: str, req: PipelineStartRequest | None = None):
                   "company_ids": req.company_ids}
     elif stage == "extract":
         from pipeline.extractor import run
-        kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids}
+        kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids,
+                  "retry_errors": req.retry_errors}
     elif stage == "index":
         from pipeline.indexer import run
         kwargs = {"reprocess": req.reprocess, "since": req.since, "company_ids": req.company_ids}

@@ -94,9 +94,10 @@ class _DynamicSemaphore:
 
 
 def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None = None,
-        cancel_check=None, progress_cb=None):
+        cancel_check=None, progress_cb=None, retry_errors: bool = False):
     """Extract text from all downloaded-but-not-extracted attachments.
     When reprocess=True, re-extract all downloaded attachments.
+    When retry_errors=True, also retry previously-failed extractions.
 
     Runs extractions in parallel using a ThreadPoolExecutor gated by a
     dynamic semaphore. The worker count is read from the runtime setting
@@ -105,7 +106,10 @@ def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None 
     from api.deps import get_setting
 
     db = Database()
-    attachments = db.get_downloaded_unextracted(reprocess=reprocess, since=since, company_ids=company_ids)
+    attachments = db.get_downloaded_unextracted(
+        reprocess=reprocess, since=since, company_ids=company_ids,
+        retry_errors=retry_errors,
+    )
     total = len(attachments)
 
     if not attachments:
@@ -150,6 +154,7 @@ def run(reprocess: bool = False, since: str = "", company_ids: list[str] | None 
                 done_count += 1
                 local_done = done_count
             log.warning(f"  Failed: {att['filename']}: {e}")
+            worker_db.set_extract_failed(att["id"], str(e))
             if progress_cb:
                 progress_cb(local_done, total)
         finally:
@@ -212,5 +217,7 @@ if __name__ == "__main__":
     parser.add_argument("--reprocess", action="store_true", help="Re-extract all downloaded attachments")
     parser.add_argument("--since", default="", help="Only process reports from this date (YYYY-MM-DD)")
     parser.add_argument("--company-ids", nargs="+", default=None, help="Only process these company IDs")
+    parser.add_argument("--retry-errors", action="store_true", help="Also retry previously-failed extractions")
     args = parser.parse_args()
-    run(reprocess=args.reprocess, since=args.since, company_ids=args.company_ids)
+    run(reprocess=args.reprocess, since=args.since, company_ids=args.company_ids,
+        retry_errors=args.retry_errors)
