@@ -109,20 +109,19 @@ def start_job(stage: str, target, kwargs: dict | None = None) -> bool:
     job.status = "running"
     job.started_at = datetime.now().isoformat()
 
-    # For run_all: initialize stages_detail and file logging
-    file_handler = None
+    # For run_all: initialize stages_detail
     if stage == "run_all":
-        from config import TMP_DIR
         stage_names = ["scrape", "parse", "download", "extract", "index"]
         job.stages_detail = [StageDetail(name=n) for n in stage_names]
 
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        log_path = TMP_DIR / f"magna-run-{timestamp}.log"
-        job.log_file = str(log_path)
-        # Open unbuffered so log lines appear in the file immediately
-        stream = open(str(log_path), "a", encoding="utf-8", buffering=1)  # line-buffered
-        file_handler = logging.StreamHandler(stream)
-        file_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s %(message)s"))
+    # File logging — for all stages
+    from config import TMP_DIR
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    log_path = TMP_DIR / f"magna-{stage}-{timestamp}.log"
+    job.log_file = str(log_path)
+    stream = open(str(log_path), "a", encoding="utf-8", buffering=1)  # line-buffered
+    file_handler = logging.StreamHandler(stream)
+    file_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s %(message)s"))
 
     # Set up log capture — attach handler ONLY to the stage's pipeline logger,
     # not the root logger. This prevents log contamination between stages.
@@ -208,3 +207,25 @@ def stop_job(stage: str) -> bool:
         return False
     job.cancel_requested = True
     return True
+
+
+# ── Runtime Settings ──────────────────────────────────────────
+# Thread-safe mutable settings dict. Resets to defaults on server restart.
+
+_settings_lock = threading.Lock()
+_settings: dict = {"extract_workers": 5}
+
+
+def get_setting(key: str):
+    with _settings_lock:
+        return _settings[key]
+
+
+def set_setting(key: str, value):
+    with _settings_lock:
+        _settings[key] = value
+
+
+def get_all_settings() -> dict:
+    with _settings_lock:
+        return dict(_settings)

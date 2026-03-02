@@ -74,6 +74,20 @@ CREATE INDEX IF NOT EXISTS idx_reports_form_type ON reports(form_type);
 CREATE INDEX IF NOT EXISTS idx_att_report_id ON attachments(report_id);
 CREATE INDEX IF NOT EXISTS idx_att_ref ON attachments(reference_number);
 CREATE INDEX IF NOT EXISTS idx_att_status ON attachments(download_status);
+
+CREATE TABLE IF NOT EXISTS companies (
+    magna_id    TEXT PRIMARY KEY,
+    name        TEXT NOT NULL,
+    magna_name  TEXT,
+    english_name TEXT,
+    symbol      TEXT,
+    tase_number TEXT,
+    isin        TEXT,
+    weight      TEXT,
+    market_cap  TEXT,
+    source      TEXT DEFAULT 'manual',
+    created_at  TEXT DEFAULT (datetime('now'))
+);
 """
 
 
@@ -95,6 +109,10 @@ class Database:
             self.conn.execute("ALTER TABLE attachments ADD COLUMN page_count INTEGER DEFAULT 0")
             self.conn.commit()
             log.info("Migration: added page_count column to attachments")
+
+        # Auto-seed companies from ta125_magna.json if table is empty
+        if self.company_count() == 0:
+            self._seed_companies()
 
     def close(self):
         self.conn.close()
@@ -536,6 +554,64 @@ class Database:
             (company_id, scraped_through),
         )
         self.conn.commit()
+
+    # ── Companies ──────────────────────────────────────────────
+
+    def _seed_companies(self):
+        """Seed companies table from ta125_magna.json."""
+        from config import COMPANY_LIST_PATH
+        if not COMPANY_LIST_PATH.exists():
+            log.warning(f"Cannot seed companies: {COMPANY_LIST_PATH} not found")
+            return
+        companies = json.loads(COMPANY_LIST_PATH.read_text(encoding="utf-8"))
+        for c in companies:
+            self.conn.execute(
+                """INSERT OR IGNORE INTO companies
+                   (magna_id, name, magna_name, english_name, symbol, tase_number, isin, weight, market_cap, source)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'ta125')""",
+                (str(c["magna_id"]), c.get("name", ""), c.get("magna_name"),
+                 c.get("english_name"), c.get("symbol"), c.get("tase_number"),
+                 c.get("isin"), c.get("weight"), c.get("market_cap")),
+            )
+        self.conn.commit()
+        log.info(f"Seeded {len(companies)} companies from ta125_magna.json")
+
+    def company_count(self) -> int:
+        return self.conn.execute("SELECT COUNT(*) FROM companies").fetchone()[0]
+
+    def get_companies(self, company_ids: list[str] | None = None) -> list[dict]:
+        """Return all companies, or filtered by magna_id list."""
+        if company_ids:
+            placeholders = ", ".join("?" for _ in company_ids)
+            cur = self.conn.execute(
+                f"SELECT * FROM companies WHERE magna_id IN ({placeholders}) ORDER BY name",
+                company_ids,
+            )
+        else:
+            cur = self.conn.execute("SELECT * FROM companies ORDER BY name")
+        return [dict(r) for r in cur.fetchall()]
+
+    def add_company(self, magna_id: str, name: str, magna_name: str | None = None,
+                    english_name: str | None = None, symbol: str | None = None,
+                    tase_number: str | None = None, isin: str | None = None,
+                    source: str = "manual") -> bool:
+        """Insert a company. Returns True if inserted, False if already exists."""
+        try:
+            self.conn.execute(
+                """INSERT INTO companies (magna_id, name, magna_name, english_name, symbol, tase_number, isin, source)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (magna_id, name, magna_name, english_name, symbol, tase_number, isin, source),
+            )
+            self.conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+
+    def remove_company(self, magna_id: str) -> bool:
+        """Delete a company by magna_id. Returns True if deleted."""
+        cur = self.conn.execute("DELETE FROM companies WHERE magna_id = ?", (magna_id,))
+        self.conn.commit()
+        return cur.rowcount > 0
 
     def form_type_counts(self) -> list[dict]:
         cur = self.conn.execute(

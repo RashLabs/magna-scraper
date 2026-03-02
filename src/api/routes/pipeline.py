@@ -1,15 +1,33 @@
 """Pipeline control endpoints."""
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, Field
 
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from models import PipelineStartRequest, PipelineStatusResponse, PipelineLogResponse
-from api.deps import jobs, STAGES, start_job, stop_job
+from api.deps import jobs, STAGES, start_job, stop_job, get_all_settings, set_setting
 
 router = APIRouter(prefix="/pipeline", tags=["pipeline"])
+
+
+# ── Runtime settings ──────────────────────────────────────────
+
+class SettingsUpdate(BaseModel):
+    extract_workers: int = Field(ge=1, le=20)
+
+
+@router.get("/settings")
+def get_settings():
+    return get_all_settings()
+
+
+@router.patch("/settings")
+def update_settings(body: SettingsUpdate):
+    set_setting("extract_workers", body.extract_workers)
+    return get_all_settings()
 
 
 def _get_stage_status(stage: str) -> dict:

@@ -2,24 +2,92 @@
 
 import json
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel
 
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from api.deps import get_db
-from config import COMPANY_LIST_PATH
+from config import DATA_DIR
 
 router = APIRouter(tags=["data"])
+
+# ── MAGNA entity registry (loaded once for search) ───────────
+_magna_entities: list[dict] | None = None
+
+
+def _get_magna_entities() -> list[dict]:
+    global _magna_entities
+    if _magna_entities is None:
+        path = DATA_DIR / "magna_entities.json"
+        if not path.exists():
+            raise HTTPException(404, f"MAGNA entities file not found: {path}")
+        _magna_entities = json.loads(path.read_text(encoding="utf-8"))
+    return _magna_entities
+
+
+# ── Companies ────────────────────────────────────────────────
+
+
+class AddCompanyRequest(BaseModel):
+    magna_id: str
+    name: str
+    magna_name: str | None = None
+    english_name: str | None = None
+    symbol: str | None = None
+    tase_number: str | None = None
+    isin: str | None = None
 
 
 @router.get("/companies")
 def list_companies():
-    """Return the TA-125 company list with magna_id mappings."""
-    if not COMPANY_LIST_PATH.exists():
-        raise HTTPException(404, f"Company list not found: {COMPANY_LIST_PATH}")
-    companies = json.loads(COMPANY_LIST_PATH.read_text(encoding="utf-8"))
-    return companies
+    """Return the company list from DB (seeded from TA-125 + manually added)."""
+    db = get_db()
+    return db.get_companies()
+
+
+@router.post("/companies", status_code=201)
+def add_company(body: AddCompanyRequest):
+    """Add a company to the tracked list."""
+    db = get_db()
+    inserted = db.add_company(
+        magna_id=body.magna_id, name=body.name, magna_name=body.magna_name,
+        english_name=body.english_name, symbol=body.symbol, tase_number=body.tase_number,
+        isin=body.isin,
+    )
+    if not inserted:
+        raise HTTPException(409, f"Company {body.magna_id} already exists")
+    return {"ok": True, "magna_id": body.magna_id}
+
+
+@router.delete("/companies/{magna_id}")
+def remove_company(magna_id: str):
+    """Remove a company from the tracked list."""
+    db = get_db()
+    removed = db.remove_company(magna_id)
+    if not removed:
+        raise HTTPException(404, f"Company {magna_id} not found")
+    return {"ok": True}
+
+
+@router.get("/companies/search")
+def search_companies(q: str = Query(..., min_length=1)):
+    """Substring search on MAGNA entity registry, excluding already-added companies."""
+    db = get_db()
+    existing_ids = {c["magna_id"] for c in db.get_companies()}
+    entities = _get_magna_entities()
+
+    query = q.strip().lower()
+    results = []
+    for ent in entities:
+        if str(ent["id"]) in existing_ids:
+            continue
+        if query in ent.get("name", "").lower() or query in str(ent.get("id", "")):
+            results.append({"magna_id": str(ent["id"]), "name": ent["name"]})
+            if len(results) >= 20:
+                break
+    return results
 
 
 @router.get("/reports")

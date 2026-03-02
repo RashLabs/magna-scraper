@@ -19,7 +19,6 @@ from config import (
     MAGNA_URL, API_RESULTS_URL, DEFAULT_SINCE,
     SLOW_MO, TIMEOUT_MS, VIEWPORT,
     DELAY_BETWEEN_PAGES, DELAY_BETWEEN_COMPANIES,
-    COMPANY_LIST_PATH,
 )
 
 log = logging.getLogger(__name__)
@@ -269,54 +268,40 @@ def _scrape_entity(pw_page: Page, db: Database, entity_id: str,
     return stats
 
 
-def _load_companies(company_list: str = "", company_ids: list[str] | None = None) -> list[dict]:
-    """Load company list, optionally filtered by magna_ids."""
-    if company_list:
-        path = Path(company_list)
-    elif COMPANY_LIST_PATH.exists():
-        path = COMPANY_LIST_PATH
-    else:
-        log.error(f"No company list found at {COMPANY_LIST_PATH}")
-        return []
-
-    companies = json.loads(path.read_text(encoding="utf-8"))
-
+def _load_companies(db: Database, company_ids: list[str] | None = None) -> list[dict]:
+    """Load company list from the DB, optionally filtered by magna_ids."""
+    companies = db.get_companies(company_ids)
     if company_ids:
-        id_set = set(company_ids)
-        all_ids_in_file = {str(c["magna_id"]) for c in companies}
-        log.info(f"Requested IDs: {company_ids}")
-        log.info(f"First 10 IDs in file: {sorted(all_ids_in_file, key=int)[:10]}")
-        companies = [c for c in companies if str(c["magna_id"]) in id_set]
-        log.info(f"Filtered to {len(companies)} companies from {len(id_set)} requested IDs")
-
+        log.info(f"Filtered to {len(companies)} companies from {len(company_ids)} requested IDs")
     return companies
 
 
 def run(since: str = DEFAULT_SINCE, headless: bool = True,
-        company_list: str = "", company_ids: list[str] | None = None,
+        company_ids: list[str] | None = None,
         rescrape: bool = False, fetch_html: bool = True,
-        cancel_check=None, progress_cb=None):
+        cancel_check=None, progress_cb=None,
+        company_list: str = ""):
     """Main scrape entry point.
 
     Args:
-        company_list: Path to a JSON file with company list.
         company_ids: List of magna_id strings to scrape (filters the company list).
                      If empty/None, scrapes all companies in the list.
         rescrape: When True, ignore watermarks and scrape the full date range.
         fetch_html: When False, skip per-report form HTML fetching (much faster).
+        company_list: Deprecated, ignored. Companies are read from DB.
     """
     to_date_iso = datetime.now().strftime("%Y-%m-%d")
     to_date = _to_magna_date(to_date_iso)
 
-    companies = _load_companies(company_list, company_ids)
+    db = Database()
+
+    companies = _load_companies(db, company_ids)
     if not companies:
         log.error("No companies to scrape.")
         return
 
     total = len(companies)
     log.info(f"Scraping {total} companies (since={since}, rescrape={rescrape})")
-
-    db = Database()
 
     with sync_playwright() as p:
         browser, pw_page = _launch_browser(p, headless)
