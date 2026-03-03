@@ -13,6 +13,12 @@ from config import DATA_DIR
 
 router = APIRouter(tags=["data"])
 
+# ── Target path for the exported company list (consumed by Moses) ────
+_MOSES_COMPANIES_JSON = (
+    Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+    / "Moses" / "backend" / "agent" / "skills" / "magna" / "companies.json"
+)
+
 # ── MAGNA entity registry (loaded once for search) ───────────
 _magna_entities: list[dict] | None = None
 
@@ -28,6 +34,21 @@ def _get_magna_entities() -> list[dict]:
 
 
 # ── Companies ────────────────────────────────────────────────
+
+
+def _export_companies_json(db) -> None:
+    """Write the current company list to Moses skill folder.
+
+    Called after every mutation (add/remove) so the JSON stays in sync
+    with the scraper DB.  The file is committed in the Moses repo and
+    ships with the code to all environments.
+    """
+    companies = db.get_companies()
+    _MOSES_COMPANIES_JSON.parent.mkdir(parents=True, exist_ok=True)
+    _MOSES_COMPANIES_JSON.write_text(
+        json.dumps(companies, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 class AddCompanyRequest(BaseModel):
@@ -58,6 +79,7 @@ def add_company(body: AddCompanyRequest):
     )
     if not inserted:
         raise HTTPException(409, f"Company {body.magna_id} already exists")
+    _export_companies_json(db)
     return {"ok": True, "magna_id": body.magna_id}
 
 
@@ -68,6 +90,7 @@ def remove_company(magna_id: str):
     removed = db.remove_company(magna_id)
     if not removed:
         raise HTTPException(404, f"Company {magna_id} not found")
+    _export_companies_json(db)
     return {"ok": True}
 
 

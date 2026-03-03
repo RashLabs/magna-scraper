@@ -41,6 +41,18 @@ app.include_router(reports.router, prefix="/api")
 app.include_router(search.router, prefix="/api")
 
 
+@app.on_event("startup")
+def _startup_export_companies():
+    """Export companies.json on every API start so the file is always fresh."""
+    from api.deps import get_db
+    from api.routes.reports import _export_companies_json
+    try:
+        _export_companies_json(get_db())
+        logging.getLogger(__name__).info("Exported companies.json on startup")
+    except Exception:
+        logging.getLogger(__name__).warning("Failed to export companies.json on startup", exc_info=True)
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "service": "magna-scraper", "version": "2.0.0"}

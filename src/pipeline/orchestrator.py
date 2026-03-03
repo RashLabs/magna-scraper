@@ -181,10 +181,10 @@ def run(since: str = "2024-01-01", headless: bool = True,
     log.info("━━━ Run-all complete ━━━")
     log.info("Reports:     %d total, %d parsed, %d indexed",
              stats["reports"]["total"], stats["reports"]["parsed"], stats["reports"]["indexed"])
-    log.info("Attachments: %d total, %d downloaded, %d extracted, %d indexed, %d failed",
+    log.info("Attachments: %d total, %d downloaded, %d extracted, %d indexed, %d dl-failed, %d ext-failed",
              stats["attachments"]["total"], stats["attachments"]["downloaded"],
              stats["attachments"]["extracted"], stats["attachments"]["indexed"],
-             stats["attachments"]["failed"])
+             stats["attachments"]["download_failed"], stats["attachments"]["extract_failed"])
 
     if progress_cb:
         progress_cb(total_stages, total_stages)
