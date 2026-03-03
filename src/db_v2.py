@@ -556,6 +556,57 @@ class Database:
             },
         }
 
+    def cleanup_indexed(self) -> dict:
+        """Null out heavy text columns for fully-indexed reports and VACUUM.
+
+        Clears:
+        - doc_texts.text_content  (bulk of DB size)
+        - reports.form_fields     (parsed HTML fields, only used during indexing)
+
+        Only touches rows where the parent report/attachment has indexed_at set.
+        Returns counts of cleaned rows and DB size before/after.
+        """
+        import os
+        db_size_before = os.path.getsize(str(self.path))
+
+        # Clear extracted text for indexed attachments
+        cur_texts = self.conn.execute("""
+            UPDATE doc_texts SET text_content = NULL
+            WHERE text_content IS NOT NULL
+              AND attachment_id IN (
+                  SELECT a.id FROM attachments a
+                  JOIN reports r ON a.report_id = r.id
+                  WHERE r.indexed_at IS NOT NULL
+              )
+        """)
+        texts_cleaned = cur_texts.rowcount
+
+        # Clear form_fields for indexed reports
+        cur_fields = self.conn.execute("""
+            UPDATE reports SET form_fields = NULL
+            WHERE form_fields IS NOT NULL AND indexed_at IS NOT NULL
+        """)
+        fields_cleaned = cur_fields.rowcount
+
+        self.conn.commit()
+        self.conn.execute("VACUUM")
+
+        db_size_after = os.path.getsize(str(self.path))
+        saved_mb = round((db_size_before - db_size_after) / (1024 * 1024), 1)
+
+        log.info(
+            "Cleanup: %d doc_texts, %d form_fields cleared. DB %.1f MB -> %.1f MB (saved %.1f MB)",
+            texts_cleaned, fields_cleaned,
+            db_size_before / (1024 * 1024), db_size_after / (1024 * 1024), saved_mb,
+        )
+        return {
+            "doc_texts_cleaned": texts_cleaned,
+            "form_fields_cleaned": fields_cleaned,
+            "db_size_before_mb": round(db_size_before / (1024 * 1024), 1),
+            "db_size_after_mb": round(db_size_after / (1024 * 1024), 1),
+            "saved_mb": saved_mb,
+        }
+
     # ── Watermarks ─────────────────────────────────────────────
 
     def get_watermark(self, company_id: str) -> str | None:

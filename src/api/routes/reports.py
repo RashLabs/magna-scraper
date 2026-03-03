@@ -154,3 +154,10 @@ def get_stats():
 def get_form_types():
     db = get_db()
     return db.form_type_counts()
+
+
+@router.post("/cleanup")
+def cleanup_indexed():
+    """Clear heavy text data (doc_texts, form_fields) for fully-indexed reports and VACUUM."""
+    db = get_db()
+    return db.cleanup_indexed()
