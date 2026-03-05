@@ -4,8 +4,10 @@ For each report:
 1. Delete all existing Qdrant points for that reference_number
 2. Chunk narrative form fields → embed → collect points
 3. Chunk extracted attachment text → embed → collect points
-4. Batch upsert all points
-5. Mark report + attachments as indexed
+4. Chunk remaining form content (fields + tables) → embed → collect points
+5. If still no chunks, create a metadata-only fallback point
+6. Batch upsert all points
+7. Mark report + attachments as indexed
 """
 
 import json
@@ -158,6 +160,42 @@ def _delete_report_points(ref: str):
     )
 
 
+def _serialize_form_content(form_fields: dict, config: dict) -> str:
+    """Serialize parsed form fields/tables into readable text for embedding.
+
+    Skips fields already covered by narrative_fields, skip_fields, metadata_fields.
+    """
+    exclude = set(config.get("narrative_fields", []))
+    exclude |= set(config.get("skip_fields", []))
+    exclude |= set(config.get("metadata_fields", []))
+
+    lines = []
+
+    # Scalar fields
+    for alias, value in form_fields.get("fields", {}).items():
+        if alias in exclude or not value or len(value.strip()) < 2:
+            continue
+        lines.append(f"{alias}: {value.strip()}")
+
+    # Tables (rows and repeated)
+    for table_name, rows in form_fields.get("tables", {}).items():
+        if not rows:
+            continue
+        lines.append(f"[{table_name}]")
+        for row in rows:
+            parts = [f"{k}: {v}" for k, v in row.items() if v and len(str(v).strip()) >= 2]
+            if parts:
+                lines.append(" | ".join(parts))
+
+    # Std fields (if any non-trivial content)
+    for alias, value in form_fields.get("std_fields", {}).items():
+        if not value or len(value.strip()) < 2:
+            continue
+        lines.append(f"{alias}: {value.strip()}")
+
+    return "\n".join(lines)
+
+
 def _prepare_report_chunks(db: Database, report: dict) -> tuple[list[str], list[dict], list[int]]:
     """Build chunks for a single report. Returns (texts, payloads, att_ids).
 
@@ -228,6 +266,39 @@ def _prepare_report_chunks(db: Database, report: dict) -> tuple[list[str], list[
                     "chunk_text": chunk["text"],
                 })
                 texts.append(chunk["text"])
+
+    # 3. Chunk form content (fields + tables not already covered by narrative_fields)
+    form_content = _serialize_form_content(form_fields, config)
+    if form_content:
+        for chunk in _chunk_text(form_content):
+            payloads.append({
+                **base_payload,
+                "source_type": "form",
+                "field_name": "_form_content",
+                "page_number": 1,
+                "chunk_index": chunk["chunk_index"],
+                "chunk_text": chunk["text"],
+            })
+            texts.append(chunk["text"])
+
+    # 4. Metadata fallback — guarantee at least 1 Qdrant point per report
+    if not texts:
+        fallback = " | ".join(filter(None, [
+            base_payload["company_name"],
+            f'{base_payload["form_type"]} {base_payload["form_name"]}'.strip(),
+            base_payload["subject"],
+            raw_date,
+        ]))
+        if fallback:
+            payloads.append({
+                **base_payload,
+                "source_type": "form",
+                "field_name": "_metadata",
+                "page_number": 1,
+                "chunk_index": 0,
+                "chunk_text": fallback,
+            })
+            texts.append(fallback)
 
     return texts, payloads, att_ids
 
