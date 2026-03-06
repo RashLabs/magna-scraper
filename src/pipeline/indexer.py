@@ -21,6 +21,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from db_v2 import Database
+from hebrew_lemmatizer import HebrewLemmatizer
+
+_hebrew_lem = HebrewLemmatizer()
 from config import (
     QDRANT_URL, QDRANT_COLLECTION, GEMINI_API_KEY,
     EMBEDDING_MODEL, EMBEDDING_DIMS,
@@ -343,7 +346,7 @@ def _flush_to_qdrant(pending_reports: list[dict]):
                 id=str(uuid.uuid4()),
                 vector={
                     "": vector,
-                    "bm25": Document(text=payload["chunk_text"], model="Qdrant/bm25"),
+                    "bm25": Document(text=_hebrew_lem.lemmatize_text(payload["chunk_text"]), model="Qdrant/bm25"),
                 },
                 payload=payload,
             ))
